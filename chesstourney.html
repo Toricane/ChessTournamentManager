@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chess Tournament Manager</title>
+        <link rel="stylesheet" href="chesstourney.css">
+        <script src="chesstourney.js"></script>
+    </head>
+    <body>
+        <h1>Chess Tournament Manager</h1>
+        <div class="inner">
+            <input id="player" placeholder="Player name">
+            <button onclick="addPlayer()">＋</button>
+            <button onclick="removePlayer()">－</button>
+        </div>
+        <div id="scoreButtons" class="inner">
+            <!--<input type="number" id="round" placeholder="Round number">-->
+            <button onclick="updateScore(1)" hidden>1</button>
+            <button onclick="updateScore(0.5)" hidden>0.5</button>
+        </div>
+        <div class="inner">
+            <!--<button onclick="newRound()">+Round</button>-->
+            <button id="pair" onclick="generateMatchups()">Pair</button>
+            <button onclick="alert('Not implemented yet :(')">Export</button>
+            <button onclick="alert('Not implemented yet :(')">Import</button>
+        </div>
+        <div id="container" class="inner"></div>
+    </body>
+</html>
