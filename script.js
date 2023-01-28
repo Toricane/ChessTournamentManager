@@ -36,11 +36,11 @@ function updateScore(status) {
     const index = data.Players.indexOf(player);
     if (index === -1) return;
     data[round][index] = status.toString();
-    data.Total[index] = (parseInt(data.Total[index]) + status).toString();
+    data.Total[index] = (parseFloat(data.Total[index]) + status).toString();
     if (opponent) {
         const opponentIndex = data.Players.indexOf(opponent);
         data[round][opponentIndex] = (status === 0.5 ? 0.5 : 0).toString();
-        data.Total[opponentIndex] = (parseInt(data.Total[opponentIndex]) + (status === 0.5 ? 0.5 : 0)).toString();
+        data.Total[opponentIndex] = (parseFloat(data.Total[opponentIndex]) + (status === 0.5 ? 0.5 : 0)).toString();
     }
     document.getElementById("player").value = "";
     document.getElementById("player").focus();
@@ -138,7 +138,7 @@ function generateMatchups() {
     }
     let players = [];
     for (let i = 0; i < data.Players.length; i++) {
-        players.push({ name: data.Players[i], score: parseInt(data.Total[i]) });
+        players.push({ name: data.Players[i], score: parseFloat(data.Total[i]) });
     }
     // Sort players by score in descending order
     players.sort((a, b) => b.score - a.score);
