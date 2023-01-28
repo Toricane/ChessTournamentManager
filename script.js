@@ -19,7 +19,8 @@ function updateScore(status) {
     let opponent = "";
     if (list) {
         for (let i = 0; i < list.childNodes.length; i++) {
-            if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML.includes(` vs ${player}`)) {
+            if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML.includes(
+                ` vs ${player}`)) {
                 if (list.children[i].innerHTML.includes("<strike>")) {
                     alert("This match has already been played!");
                     const input = document.getElementById("player");
@@ -40,7 +41,8 @@ function updateScore(status) {
     if (opponent) {
         const opponentIndex = data.Players.indexOf(opponent);
         data[round][opponentIndex] = (status === 0.5 ? 0.5 : 0).toString();
-        data.Total[opponentIndex] = (parseFloat(data.Total[opponentIndex]) + (status === 0.5 ? 0.5 : 0)).toString();
+        data.Total[opponentIndex] = (parseFloat(data.Total[opponentIndex]) + (status === 0.5 ? 0.5 : 0))
+            .toString();
     }
     document.getElementById("player").value = "";
     document.getElementById("player").focus();
@@ -109,14 +111,12 @@ function updateTable() {
     }
     try {
         container.removeChild(document.getElementById("table"));
-    } catch (e) {
-    }
+    } catch (e) { }
     container.appendChild(table);
     try {
         let oldList = container.removeChild(document.getElementById("list"));
         container.appendChild(oldList);
-    } catch (e) {
-    }
+    } catch (e) { }
 }
 
 function generateMatchups() {
@@ -134,11 +134,13 @@ function generateMatchups() {
     newRound();
     try {
         document.getElementById("list").remove();
-    } catch (e) {
-    }
+    } catch (e) { }
     let players = [];
     for (let i = 0; i < data.Players.length; i++) {
-        players.push({ name: data.Players[i], score: parseFloat(data.Total[i]) });
+        players.push({
+            name: data.Players[i],
+            score: parseFloat(data.Total[i])
+        });
     }
     // Sort players by score in descending order
     players.sort((a, b) => b.score - a.score);
@@ -257,9 +259,11 @@ function hookExport() {
     const exportButton = document.getElementById("export");
     exportButton.addEventListener("click", function () {
         // Convert your variables to a JSON string
-        const jsonData = JSON.stringify(
-            { rounds: ROUNDS, data: data, matchups: matchups }
-        );
+        const jsonData = JSON.stringify({
+            rounds: ROUNDS,
+            data: data,
+            matchups: matchups
+        });
         // Create a new <a> element and trigger a download
         const downloadLink = document.createElement("a");
         const currentDate = new Date();
@@ -270,7 +274,8 @@ function hookExport() {
         const minute = currentDate.getMinutes().toString().padStart(2, '0');
         const formattedDate = `${year}-${month}-${day}_${hour}-${minute}`;
         downloadLink.href = "data:text/json," + jsonData;
-        downloadLink.download = `chessexport_${formattedDate}_${ROUNDS}rounds_${data.Players.length}players.json`;
+        downloadLink.download =
+            `chessexport_${formattedDate}_${ROUNDS}rounds_${data.Players.length}players.json`;
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
@@ -302,7 +307,8 @@ function handleFileSelect() {
                 if (!playerPlayed) continue;
                 const player = data.Players[i];
                 for (let i = 0; i < list.childNodes.length; i++) {
-                    if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML.includes(` vs ${player}`)) {
+                    if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML
+                        .includes(` vs ${player}`)) {
                         if (list.children[i].innerHTML.includes("<strike>")) {
                             continue;
                         }
