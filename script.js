@@ -45,7 +45,7 @@ function updateScore(status) {
     document.getElementById("player").value = "";
     document.getElementById("player").focus();
     updateTable();
-    if (!data[round].some(element => element === undefined)) {
+    if (!data[round].some(element => element === undefined || element === "" || element === null)) {
         generateMatchups();
     }
 }
