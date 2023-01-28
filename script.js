@@ -39,11 +39,6 @@ function updateScore(status) {
     data.Total[index] = (parseInt(data.Total[index]) + status).toString();
     if (opponent) {
         const opponentIndex = data.Players.indexOf(opponent);
-        // if (data[round][opponentIndex]) {
-        //     data[round][opponentIndex] += status === 0.5 ? 0.5 : 0;
-        // } else {
-        //     data[round][opponentIndex] = status === 0.5 ? 0.5 : 0;
-        // }
         data[round][opponentIndex] = (status === 0.5 ? 0.5 : 0).toString();
         data.Total[opponentIndex] = (parseInt(data.Total[opponentIndex]) + (status === 0.5 ? 0.5 : 0)).toString();
     }
@@ -143,7 +138,7 @@ function generateMatchups() {
     }
     let players = [];
     for (let i = 0; i < data.Players.length; i++) {
-        players.push({ name: data.Players[i], score: data.Total[i] });
+        players.push({ name: data.Players[i], score: parseInt(data.Total[i]) });
     }
     // Sort players by score in descending order
     players.sort((a, b) => b.score - a.score);
@@ -181,6 +176,10 @@ function generateMatchups() {
         }
     }
     matchedPlayers.forEach(innerArr => innerArr.sort(() => Math.random() - 0.5))
+    placeMatchups(matchedPlayers);
+}
+
+function placeMatchups(matchedPlayers) {
     const container = document.getElementById("container");
     const ol = document.createElement("ol");
     matchedPlayers.forEach((arr, index) => {
@@ -206,7 +205,19 @@ function generateMatchups() {
             }
         }
     }
+    matchups = matchedPlayers;
     updateTable();
+}
+
+function modifyDatalist() {
+    const datalist = document.getElementById("playerNames");
+    datalist.innerHTML = "";
+    const sortedPlayers = data.Players.slice().sort();
+    sortedPlayers.forEach((player) => {
+        const option = document.createElement("option");
+        option.value = player;
+        datalist.appendChild(option);
+    });
 }
 
 function addPlayer() {
@@ -221,6 +232,7 @@ function addPlayer() {
         data[i].push(0);
     }
     data.Total.push(0);
+    modifyDatalist();
     updateTable();
 }
 
@@ -237,5 +249,70 @@ function removePlayer() {
         data[i].splice(index, 1);
     }
     data.Total.splice(index, 1);
+    modifyDatalist();
     updateTable();
+}
+
+function hookExport() {
+    const exportButton = document.getElementById("export");
+    exportButton.addEventListener("click", function () {
+        // Convert your variables to a JSON string
+        const jsonData = JSON.stringify(
+            { rounds: ROUNDS, data: data, matchups: matchups }
+        );
+        // Create a new <a> element and trigger a download
+        const downloadLink = document.createElement("a");
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const hour = currentDate.getHours().toString().padStart(2, '0');
+        const minute = currentDate.getMinutes().toString().padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}_${hour}-${minute}`;
+        downloadLink.href = "data:text/json," + jsonData;
+        downloadLink.download = `chessexport_${formattedDate}_${ROUNDS}rounds_${data.Players.length}players.json`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    });
+}
+
+function handleFileSelect() {
+    const input = document.getElementById('fileInput');
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function () {
+        const fileContent = JSON.parse(reader.result);
+        data = fileContent.data;
+        matchups = fileContent.matchups;
+        ROUNDS = fileContent.rounds;
+        placeMatchups(matchups);
+
+        document.getElementById("pair").hidden = true;
+        const scoreButtons = document.getElementById("scoreButtons");
+        for (let i = 0; i < scoreButtons.children.length; i++) {
+            scoreButtons.children[i].hidden = false;
+        }
+
+        const list = document.getElementById("list");
+        if (list) {
+            for (let i = 0; i < data.Players.length; i++) {
+                const playerPlayed = data[ROUNDS][i] !== null;
+                if (!playerPlayed) continue;
+                const player = data.Players[i];
+                for (let i = 0; i < list.childNodes.length; i++) {
+                    if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML.includes(` vs ${player}`)) {
+                        if (list.children[i].innerHTML.includes("<strike>")) {
+                            continue;
+                        }
+                        list.children[i].innerHTML = `<strike>${list.children[i].innerHTML}</strike>`
+                        break;
+                    }
+                }
+            }
+        }
+    };
+
+    reader.readAsText(file);
 }

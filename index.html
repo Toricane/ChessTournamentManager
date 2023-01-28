@@ -8,7 +8,8 @@
     <body>
         <h1>Chess Tournament Manager</h1>
         <div class="inner">
-            <input id="player" placeholder="Player name">
+            <input id="player" placeholder="Player name" list="playerNames">
+            <datalist id="playerNames"></datalist>
             <button onclick="addPlayer()">＋</button>
             <button onclick="removePlayer()">－</button>
         </div>
@@ -18,9 +19,16 @@
         </div>
         <div class="inner">
             <button id="pair" onclick="generateMatchups()">Pair</button>
-            <button onclick="alert('Not implemented yet :(')">Export</button>
-            <button onclick="alert('Not implemented yet :(')">Import</button>
+            <input type="file" accept=".json" id="fileInput" style="display:none" onchange="handleFileSelect()"/>
+            <button id="import" onclick="document.getElementById('fileInput').click()">Import</button>
+            <button id="export">Export</button>
         </div>
+        <script>
+            hookExport();
+            window.onbeforeunload = function() {
+                return "Are you sure you would like to quit the current tournament session?";
+            };
+        </script>
         <div id="container" class="inner"></div>
     </body>
 </html>
