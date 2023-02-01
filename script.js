@@ -41,11 +41,11 @@ function updateScore(status) {
     const index = data.Players.indexOf(player);
     if (index === -1) return;
     data[round][index] = status.toString();
-    data.Total[index] = (parseFloat(data.Total[index]) + status).toString();
+    data.Total[index] = (parseFloat(data.Total[index]) + parseFloat(status)).toString();
     if (opponent) {
         const opponentIndex = data.Players.indexOf(opponent);
         data[round][opponentIndex] = (status === 0.5 ? 0.5 : 0).toString();
-        data.Total[opponentIndex] = (parseFloat(data.Total[opponentIndex]) + (status === 0.5 ? 0.5 : 0))
+        data.Total[opponentIndex] = (parseFloat(data.Total[opponentIndex]) + (parseFloat(status) === 0.5 ? 0.5 : 0))
             .toString();
     }
     document.getElementById("player").value = "";
@@ -69,7 +69,7 @@ function updateTable() {
         let added = false;
 
         for (let i = 0; i < sortedData.Players.length; i++) {
-            if (total > sortedData.Total[i]) {
+            if (parseFloat(total) > parseFloat(sortedData.Total[i])) {
                 sortedData.Players.splice(i, 0, player);
                 for (let j = 1; j <= ROUNDS; j++) {
                     sortedData[j].splice(i, 0, data[j][index]);
@@ -206,7 +206,7 @@ function placeMatchups(matchedPlayers) {
             for (let j = 1; j <= ROUNDS; j++) {
                 if (!data[j][ind]) {
                     data[j][ind] = 0.5;
-                    data.Total[ind] += 0.5;
+                    data.Total[ind] = (parseFloat(data.Total[ind]) + 0.5).toString();
                     break;
                 }
             }
