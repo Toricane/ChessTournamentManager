@@ -92,6 +92,7 @@ function updateTable() {
     const container = document.getElementById("container");
     const table = document.createElement("table");
     table.id = "table";
+    table.onclick = playerClicked;
     let header = table.insertRow();
     let hCell = header.insertCell();
     hCell.innerHTML = "Players";
@@ -104,7 +105,7 @@ function updateTable() {
     for (let i = 0; i < data.Players.length; i++) {
         let row = table.insertRow();
         let cell = row.insertCell();
-        cell.innerHTML = data.Players[i];
+        cell.innerHTML = `<a class="player">${data.Players[i]}</a>`;
         for (let j = 1; j <= ROUNDS; j++) {
             cell = row.insertCell();
             cell.innerHTML = data[j][i] || "";

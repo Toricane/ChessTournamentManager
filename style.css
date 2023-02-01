@@ -124,4 +124,5 @@ ol>li:before {
 a.player {
     color: inherit;
     text-decoration: none;
+    cursor: pointer;
 }
