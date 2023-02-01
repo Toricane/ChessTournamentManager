@@ -120,3 +120,8 @@ ol>li:before {
     font-weight: bold;
     margin-right: 5px;
 }
+
+a.player {
+    color: inherit;
+    text-decoration: none;
+}

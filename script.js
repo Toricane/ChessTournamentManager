@@ -18,16 +18,20 @@ function updateScore(status) {
     const list = document.getElementById("list");
     let opponent = "";
     if (list) {
+        if (list.children[list.children.length - 1].innerHTML === `<a class="player">${player}</a> has a bye`) {
+            document.getElementById("player").select();
+            return;
+        }
         for (let i = 0; i < list.childNodes.length; i++) {
-            if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML.includes(
-                ` vs ${player}`)) {
+            if (list.children[i].innerHTML.includes(`<a class="player">${player}</a> vs `) || list.children[i].innerHTML.includes(
+                ` vs <a class="player">${player}</a>`)) {
                 if (list.children[i].innerHTML.includes("<strike>")) {
                     alert("This match has already been played!");
                     const input = document.getElementById("player");
                     input.select();
                     return;
                 }
-                opponent = list.children[i].innerHTML.replace(player, "").replace(" vs ", "");
+                opponent = list.children[i].innerHTML.replace(`<a class="player">${player}</a>`, "").replace(" vs ", "").replace('<a class="player">', "").replace("</a>", ""); // <a class="player">opponent</a>
                 list.children[i].innerHTML = `<strike>${list.children[i].innerHTML}</strike>`
                 break;
             }
@@ -86,7 +90,6 @@ function updateTable() {
     });
     data = sortedData;
     const container = document.getElementById("container");
-    // container.innerHTML = "";
     const table = document.createElement("table");
     table.id = "table";
     let header = table.insertRow();
@@ -186,16 +189,17 @@ function placeMatchups(matchedPlayers) {
     const ol = document.createElement("ol");
     matchedPlayers.forEach((arr, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `${arr[0]} vs ${arr[1]}`;
+        li.innerHTML = `<a class="player">${arr[0]}</a> vs <a class="player">${arr[1]}</a>`;
         ol.appendChild(li);
     });
     ol.id = "list";
+    ol.onclick = playerClicked;
     container.appendChild(ol);
     for (let i = 0; i < data.Players.length; i++) {
         let notInArray = matchedPlayers.every(subArray => !subArray.includes(data.Players[i]));
         if (notInArray) {
             const li = document.createElement("li");
-            li.innerHTML = `${data.Players[i]} has a bye`;
+            li.innerHTML = `<a class="player">${data.Players[i]}</a> has a bye`;
             ol.appendChild(li);
             const ind = data.Players.indexOf(data.Players[i]);
             for (let j = 1; j <= ROUNDS; j++) {
@@ -324,14 +328,14 @@ function importData() {
     document.getElementById("pair").hidden = true;
 
     const list = document.getElementById("list");
-    if (list && ROUNDS) {
+    if (list) {
         for (let i = 0; i < data.Players.length; i++) {
             const playerPlayed = data[ROUNDS][i] !== null;
             if (!playerPlayed) continue;
             const player = data.Players[i];
             for (let i = 0; i < list.childNodes.length; i++) {
-                if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML
-                    .includes(` vs ${player}`)) {
+                if (list.children[i].innerHTML.includes(`<a class="player">${player}</a> vs `) || list.children[i].innerHTML
+                    .includes(` vs <a class="player">${player}</a>`)) {
                     if (list.children[i].innerHTML.includes("<strike>")) {
                         continue;
                     }
@@ -407,4 +411,10 @@ function hookUpload() {
         };
         reader.readAsText(file);
     });
+}
+
+function playerClicked(event) {
+    if (event.target.className === "player") {
+        document.getElementById("player").value = event.target.textContent;
+    }
 }
