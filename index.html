@@ -3,29 +3,38 @@
     <head>
         <title>Chess Tournament Manager</title>
         <link rel="stylesheet" href="style.css">
-        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
         <script src="script.js"></script>
     </head>
     <body>
         <h1>Chess Tournament Manager</h1>
         <div class="inner">
-            <input id="player" placeholder="Player name" list="playerNames">
+            <input id="player" placeholder="Player name" list="playerNames" size=12>
             <datalist id="playerNames"></datalist>
             <button onclick="addPlayer()">＋</button>
             <button onclick="removePlayer()">－</button>
         </div>
+        <div class="inner">
+            <input type="file" accept=".json" id="fileInput" style="display:none" onchange="handleFileSelect()"/>
+            <input id="saveName" placeholder="Save name" list="saveNames" size=12>
+            <datalist id="saveNames"></datalist>
+            <button id="import" onclick="importData();">Load</button>
+            <button id="export" onclick="exportData();">Save</button>
+        </div>
+        <div class="inner">
+            <button id="download" onclick="downloadData();">Download</button>
+            <button id="upload">Upload</button>
+            <input type="file" accept=".json" id="uploadInput" style="display:none">
+            <button id="clear" onclick="clearData();">Clear</button>
+        </div>
         <div id="scoreButtons" class="inner">
+            <button id="pair" onclick="generateMatchups()">Pair</button>
             <button onclick="updateScore(1)" hidden>1</button>
             <button onclick="updateScore(0.5)" hidden>0.5</button>
         </div>
-        <div class="inner">
-            <button id="pair" onclick="generateMatchups()">Pair</button>
-            <input type="file" accept=".json" id="fileInput" style="display:none" onchange="handleFileSelect()"/>
-            <button id="import" onclick="document.getElementById('fileInput').click()">Import</button>
-            <button id="export">Export</button>
-        </div>
         <script>
-            hookExport();
+            hookUpload();
+            updateSaveNames();
             window.onbeforeunload = function() {
                 return "Are you sure you would like to quit the current tournament session?";
             };

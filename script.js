@@ -126,11 +126,11 @@ function generateMatchups() {
             return;
         }
     }
-    document.getElementById("pair").hidden = true;
     const scoreButtons = document.getElementById("scoreButtons");
     for (let i = 0; i < scoreButtons.children.length; i++) {
         scoreButtons.children[i].hidden = false;
     }
+    document.getElementById("pair").hidden = true;
     newRound();
     try {
         document.getElementById("list").remove();
@@ -255,74 +255,156 @@ function removePlayer() {
     updateTable();
 }
 
-function hookExport() {
-    const exportButton = document.getElementById("export");
-    exportButton.addEventListener("click", function () {
-        // Convert your variables to a JSON string
-        const jsonData = JSON.stringify({
-            rounds: ROUNDS,
-            data: data,
-            matchups: matchups
-        });
-        // Create a new <a> element and trigger a download
-        const downloadLink = document.createElement("a");
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-        const day = currentDate.getDate().toString().padStart(2, '0');
-        const hour = currentDate.getHours().toString().padStart(2, '0');
-        const minute = currentDate.getMinutes().toString().padStart(2, '0');
-        const formattedDate = `${year}-${month}-${day}_${hour}-${minute}`;
-        downloadLink.href = "data:text/json," + jsonData;
-        downloadLink.download =
-            `chessexport_${formattedDate}_${ROUNDS}rounds_${data.Players.length}players.json`;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-    });
+function updateSaveNames() {
+    let savedNames = Object.keys(localStorage);
+    let options = savedNames.map(name => `<option value="${name}"></option>`).join('');
+    document.getElementById("saveNames").innerHTML = options;
 }
 
-function handleFileSelect() {
-    const input = document.getElementById('fileInput');
-    const file = input.files[0];
-    const reader = new FileReader();
 
-    reader.onload = function () {
-        const fileContent = JSON.parse(reader.result);
-        data = fileContent.data;
-        matchups = fileContent.matchups;
-        ROUNDS = fileContent.rounds;
-        const c = document.getElementById("container")
-        if (c) {
-            c.innerHTML = "";
+function exportData() {
+    const saveName = document.getElementById("saveName").value;
+    if (!saveName) {
+        alert("Please enter a name for the save!");
+        return;
+    }
+    const jsonData = JSON.stringify({
+        rounds: ROUNDS,
+        data: data,
+        matchups: matchups
+    });
+    let dataExists = false;
+    if (localStorage.getItem(saveName)) {
+        dataExists = true;
+    }
+    if (!dataExists) {
+        localStorage.setItem(saveName, jsonData);
+        updateSaveNames();
+    } else {
+        const overwrite = confirm(
+            `Save already exists with name: ${saveName}\nWould you like to overwrite it?`
+        );
+        if (overwrite) {
+            localStorage.setItem(saveName, jsonData);
+            updateSaveNames();
         }
-        placeMatchups(matchups);
+    }
+}
 
-        document.getElementById("pair").hidden = true;
-        const scoreButtons = document.getElementById("scoreButtons");
-        for (let i = 0; i < scoreButtons.children.length; i++) {
-            scoreButtons.children[i].hidden = false;
-        }
+function importData() {
+    const saveName = document.getElementById("saveName").value;
+    if (!saveName) {
+        alert("Please enter a name for the save!");
+        return;
+    }
+    const jsonData = localStorage.getItem(saveName);
+    if (!jsonData) {
+        alert("No save with that name exists!");
+        return;
+    }
+    const parsedJsonData = JSON.parse(jsonData);
 
-        const list = document.getElementById("list");
-        if (list) {
-            for (let i = 0; i < data.Players.length; i++) {
-                const playerPlayed = data[ROUNDS][i] !== null;
-                if (!playerPlayed) continue;
-                const player = data.Players[i];
-                for (let i = 0; i < list.childNodes.length; i++) {
-                    if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML
-                        .includes(` vs ${player}`)) {
-                        if (list.children[i].innerHTML.includes("<strike>")) {
-                            continue;
-                        }
-                        list.children[i].innerHTML = `<strike>${list.children[i].innerHTML}</strike>`
-                        break;
+    data = parsedJsonData.data;
+    matchups = parsedJsonData.matchups;
+    ROUNDS = parsedJsonData.rounds || 0;
+
+    const c = document.getElementById("container")
+    if (c) {
+        c.innerHTML = "";
+    }
+    if (!ROUNDS) {
+        updateTable();
+        return;
+    }
+    placeMatchups(matchups);
+    const scoreButtons = document.getElementById("scoreButtons");
+    for (let i = 0; i < scoreButtons.children.length; i++) {
+        scoreButtons.children[i].hidden = false;
+    }
+    document.getElementById("pair").hidden = true;
+
+    const list = document.getElementById("list");
+    if (list && ROUNDS) {
+        for (let i = 0; i < data.Players.length; i++) {
+            const playerPlayed = data[ROUNDS][i] !== null;
+            if (!playerPlayed) continue;
+            const player = data.Players[i];
+            for (let i = 0; i < list.childNodes.length; i++) {
+                if (list.children[i].innerHTML.includes(`${player} vs `) || list.children[i].innerHTML
+                    .includes(` vs ${player}`)) {
+                    if (list.children[i].innerHTML.includes("<strike>")) {
+                        continue;
                     }
+                    list.children[i].innerHTML = `<strike>${list.children[i].innerHTML}</strike>`
+                    break;
                 }
             }
         }
-    };
+    }
+}
 
-    reader.readAsText(file);
+function clearData() {
+    const keys = Object.keys(localStorage);
+    if (!keys.length) {
+        alert("No saves to delete!");
+        return;
+    }
+    const clear = confirm(
+        `Are you sure you want to delete ${keys.length} save${keys.length === 1 ? "" : "s"}?`
+    );
+    if (!clear) return;
+    localStorage.clear();
+    updateSaveNames();
+}
+
+function downloadData() {
+    const saveData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        saveData[key] = JSON.parse(localStorage.getItem(key));
+    }
+
+    const blob = new Blob([JSON.stringify(saveData)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const hour = currentDate.getHours().toString().padStart(2, '0');
+    const minute = currentDate.getMinutes().toString().padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}_${hour}-${minute}`;
+    a.download =
+        `chessexport_${formattedDate}_${ROUNDS}rounds_${data.Players.length}players.json`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 100);
+}
+
+function hookUpload() {
+    const uploadButton = document.getElementById("upload");
+    const fileInput = document.getElementById("uploadInput");
+
+    uploadButton.addEventListener("click", () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("input", (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const jsonData = JSON.parse(event.target.result);
+            for (const key in jsonData) {
+                if (!localStorage.getItem(key)) {
+                    localStorage.setItem(key, JSON.stringify(jsonData[key]));
+                }
+            }
+        };
+        reader.readAsText(file);
+    });
 }
