@@ -292,6 +292,10 @@ function handleFileSelect() {
         data = fileContent.data;
         matchups = fileContent.matchups;
         ROUNDS = fileContent.rounds;
+        const c = document.getElementById("container")
+        if (c) {
+            c.innerHTML = "";
+        }
         placeMatchups(matchups);
 
         document.getElementById("pair").hidden = true;
