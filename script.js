@@ -50,6 +50,13 @@ function updateScore(status) {
     }
     document.getElementById("player").value = "";
     document.getElementById("player").focus();
+    let result;
+    if (status === 1) {
+        result = `${player} won`;
+    } else if (status === 0.5) {
+        result = `draw`;
+    }
+    addMatchToLog(round, player, opponent, result);
     updateTable();
     if (!data[round].some(element => element === undefined || element === "" || element === null)) {
         generateMatchups();
@@ -202,6 +209,7 @@ function placeMatchups(matchedPlayers) {
             const li = document.createElement("li");
             li.innerHTML = `<a class="player">${data.Players[i]}</a> has a bye`;
             ol.appendChild(li);
+            addMatchToLog(ROUNDS, data.Players[i], null, "bye")
             const ind = data.Players.indexOf(data.Players[i]);
             for (let j = 1; j <= ROUNDS; j++) {
                 if (!data[j][ind]) {
@@ -369,7 +377,7 @@ function downloadData() {
         saveData[key] = JSON.parse(localStorage.getItem(key));
     }
 
-    const blob = new Blob([JSON.stringify(saveData)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.style.display = "none";
@@ -381,8 +389,7 @@ function downloadData() {
     const hour = currentDate.getHours().toString().padStart(2, '0');
     const minute = currentDate.getMinutes().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}_${hour}-${minute}`;
-    a.download =
-        `chessexport_${formattedDate}_${ROUNDS}rounds_${data.Players.length}players.json`;
+    a.download = `chessexport_${formattedDate}.json`;
     document.body.appendChild(a);
     a.click();
     setTimeout(() => {
@@ -418,4 +425,94 @@ function playerClicked(event) {
     if (event.target.className === "player") {
         document.getElementById("player").value = event.target.textContent;
     }
+}
+
+function addMatchToLog(round, player1, player2, outcome) {
+    const logTable = document.getElementById("logTable");
+    if (logTable.hidden) logTable.hidden = false;
+    const loggy = document.getElementById("loggy");
+    const newRow = loggy.insertRow();
+    newRow.setAttribute('data-round', ROUNDS);
+    newRow.insertCell().innerHTML = `<a>${round}</a>`;
+    if (player2) {
+        newRow.insertCell().innerHTML = `${player1} vs ${player2}`;
+    } else {
+        newRow.insertCell().innerHTML = player1;
+    }
+    newRow.insertCell().innerHTML = outcome;
+    modifyWhich();
+}
+
+function modifyWhich(checked = false) {
+    const which = document.getElementById("which");
+    which.innerHTML = "";
+    for (let i = 1; i <= ROUNDS; i++) {
+        const label = document.createElement("label");
+        label.id = `label${i}`
+        label.appendChild(document.createTextNode(i));
+        const input = document.createElement("input");
+        input.id = `checkbox${i}`;
+        input.type = "checkbox";
+        input.checked = checked;
+        input.onclick = whenWhichChanged;
+        label.appendChild(input);
+        which.appendChild(label);
+    }
+    const show = document.getElementById("show");
+    const hide = document.getElementById("hide");
+    show.checked = false;
+    hide.checked = false;
+    show.hidden = checked;
+    show.parentElement.hidden = checked;
+    hide.hidden = !checked;
+    hide.parentElement.hidden = !checked;
+    whenWhichChanged();
+}
+
+function whenWhichChanged() {
+    const which = document.getElementById("which");
+    const loggy = document.getElementById("loggy");
+    let numChecked = 0;
+    let numUnchecked = 0;
+    for (let i = 0; i < which.children.length; i++) {
+        const label = document.getElementById(`label${i + 1}`);
+        const checkbox = document.getElementById(`checkbox${i + 1}`);
+        if (checkbox.checked) {
+            numChecked++;
+        } else {
+            numUnchecked++;
+        }
+        const round = label.textContent;
+        for (let j = 0; j < loggy.rows.length; j++) {
+            if (loggy.rows[j].getAttribute('data-round') === round) {
+                loggy.rows[j].hidden = !checkbox.checked;
+            }
+        }
+    }
+    const show = document.getElementById("show");
+    const hide = document.getElementById("hide");
+    if (numUnchecked === 0) {
+        show.checked = true;
+        show.hidden = true;
+        show.parentElement.hidden = true;
+    }
+    if (numChecked === 0) {
+        hide.checked = true;
+        hide.hidden = true;
+        hide.parentElement.hidden = true;
+    }
+    if (numChecked > 0 && numUnchecked > 0) {
+        show.hidden = false;
+        show.parentElement.hidden = false;
+        hide.hidden = false;
+        hide.parentElement.hidden = false;
+    }
+    show.checked = false;
+    hide.checked = false;
+}
+
+function showHide(show, id) {
+    modifyWhich(show);
+    const element = document.getElementById(id);
+    element.checked = false;
 }

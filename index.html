@@ -39,7 +39,7 @@
             <input type="file" accept=".json" id="uploadInput" style="display:none">
             <button id="clear" onclick="clearData();">Clear</button>
         </div>
-        <div id="scoreButtons" class="inner">
+        <div id="scoreButtons" class="inner bottom">
             <button id="pair" onclick="generateMatchups()">Pair</button>
             <button onclick="updateScore(1)" hidden>1</button>
             <button onclick="updateScore(0.5)" hidden>0.5</button>
@@ -51,6 +51,31 @@
                 return "Are you sure you would like to quit the current tournament session?";
             };
         </script>
-        <div id="container" class="inner"></div>
+        <div id="container" class="inner bottom"></div>
+        <div id="show_hide" class="inner bottom">
+            <label hidden>
+                Show all
+                <input type="checkbox" id="show" onclick="modifyWhich(true, 'show')">
+            </label>
+            <label hidden>
+                Hide all
+                <input type="checkbox" id="hide" onclick="modifyWhich(false, 'hide')">
+            </label>
+        </div>
+        <div id="which" class="inner bottom"></div>
+        <div id="log" class="inner">
+            <table id="logTable" hidden>
+                <tbody id="loggy">
+                    <tr>
+                        <td class="long" colspan="3">Logs</td>
+                    </tr>
+                    <tr>
+                        <td>Round</td>
+                        <td>Match</td>
+                        <td>Result</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </body>
 </html>

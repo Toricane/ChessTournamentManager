@@ -2,13 +2,18 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-h1 {
+h1,
+.long {
     text-align: center;
 }
 
 .inner {
     display: flex;
     justify-content: center;
+}
+
+.bottom {
+    margin-bottom: 1em;
 }
 
 button {
@@ -125,4 +130,18 @@ a.player {
     color: inherit;
     text-decoration: none;
     cursor: pointer;
+}
+
+.round-number {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    margin-right: 1.25em;
+}
+
+#show_hide {
+    margin-bottom: 0;
 }
