@@ -284,7 +284,8 @@ function exportData() {
     const jsonData = JSON.stringify({
         rounds: ROUNDS,
         data: data,
-        matchups: matchups
+        matchups: matchups,
+        logs: document.getElementById("log").innerHTML
     });
     let dataExists = false;
     if (localStorage.getItem(saveName)) {
@@ -320,6 +321,7 @@ function importData() {
     data = parsedJsonData.data;
     matchups = parsedJsonData.matchups;
     ROUNDS = parsedJsonData.rounds || 0;
+    document.getElementById("log").innerHTML = parsedJsonData.logs;
 
     const c = document.getElementById("container")
     if (c) {
