@@ -356,6 +356,7 @@ function importData() {
             }
         }
     }
+    modifyWhich();
 }
 
 function clearData() {
