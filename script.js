@@ -140,6 +140,13 @@ function updateTable() {
         for (let j = 1; j <= ROUNDS; j++) {
             cell = row.insertCell();
             cell.innerHTML = data[j][i] || "";
+            if (parseFloat(cell.innerHTML) === 1) {
+                cell.classList.add("win");
+            } else if (parseFloat(cell.innerHTML) === 0.5) {
+                cell.classList.add("tie");
+            } else if (parseFloat(cell.innerHTML) === 0) {
+                cell.classList.add("loss");
+            }
         }
         cell = row.insertCell();
         cell.innerHTML = data.Total[i] || "";

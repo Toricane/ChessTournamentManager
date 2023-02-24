@@ -149,6 +149,56 @@ th {
     font-size: 16px;
 }
 
+/* Light mode */
+.light-mode {
+    background-color: #fff;
+    color: #333;
+}
+
+.light-mode td.win {
+    background-color: #c6efce;
+    /* green */
+    color: #006100;
+}
+
+.light-mode td.loss {
+    background-color: #ffc7ce;
+    /* red */
+    color: #9c0006;
+}
+
+.light-mode td.tie {
+    background-color: #ffeb9c;
+    /* yellow */
+    color: #9c5700;
+}
+
+/* Dark mode */
+.dark-mode {
+    background-color: #000;
+    color: #eee;
+}
+
+.dark-mode td.win {
+    background-color: #006100;
+    /* dark green */
+    color: #c6efce;
+}
+
+.dark-mode td.loss {
+    background-color: #9c0006;
+    /* dark red */
+    color: #ffc7ce;
+}
+
+.dark-mode td.tie {
+    background-color: #9c5700;
+    /* dark yellow */
+    color: #ffeb9c;
+}
+
+
+
 
 ol {
     counter-reset: item;
