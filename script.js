@@ -573,4 +573,10 @@ function toggleTheme() {
     const body = document.querySelector("body");
     body.classList.toggle("light-mode");
     body.classList.toggle("dark-mode");
+    const theme = document.getElementById("theme");
+    if (body.classList.contains("light-mode")) {
+        theme.innerHTML = "☀️";
+    } else {
+        theme.innerHTML = "🌙";
+    }
 }

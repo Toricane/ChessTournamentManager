@@ -62,10 +62,17 @@ button:hover {
 }
 
 #theme {
+    font-size: 24px;
+    height: 48px;
+    width: 48px;
+    border-radius: 12px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
     bottom: 12px;
     right: 12px;
-    position: fixed;
-    display: flex;
 }
 
 input {
