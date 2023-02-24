@@ -18,21 +18,36 @@ function updateScore(status) {
     const list = document.getElementById("list");
     let opponent = "";
     if (list) {
-        if (list.children[list.children.length - 1].innerHTML === `<a class="player">${player}</a> has a bye`) {
+        if (
+            list.children[list.children.length - 1].innerHTML ===
+            `<a class="player">${player}</a> has a bye`
+        ) {
             document.getElementById("player").select();
             return;
         }
         for (let i = 0; i < list.childNodes.length; i++) {
-            if (list.children[i].innerHTML.includes(`<a class="player">${player}</a> vs `) || list.children[i].innerHTML.includes(
-                ` vs <a class="player">${player}</a>`)) {
+            if (
+                list.children[i].innerHTML.includes(
+                    `<a class="player">${player}</a> vs `
+                ) ||
+                list.children[i].innerHTML.includes(
+                    ` vs <a class="player">${player}</a>`
+                )
+            ) {
                 if (list.children[i].innerHTML.includes("<strike>")) {
                     alert("This match has already been played!");
                     const input = document.getElementById("player");
                     input.select();
                     return;
                 }
-                opponent = list.children[i].innerHTML.replace(`<a class="player">${player}</a>`, "").replace(" vs ", "").replace('<a class="player">', "").replace("</a>", ""); // <a class="player">opponent</a>
-                list.children[i].innerHTML = `<strike>${list.children[i].innerHTML}</strike>`
+                opponent = list.children[i].innerHTML
+                    .replace(`<a class="player">${player}</a>`, "")
+                    .replace(" vs ", "")
+                    .replace('<a class="player">', "")
+                    .replace("</a>", ""); // <a class="player">opponent</a>
+                list.children[
+                    i
+                ].innerHTML = `<strike>${list.children[i].innerHTML}</strike>`;
                 break;
             }
         }
@@ -41,12 +56,16 @@ function updateScore(status) {
     const index = data.Players.indexOf(player);
     if (index === -1) return;
     data[round][index] = status.toString();
-    data.Total[index] = (parseFloat(data.Total[index]) + parseFloat(status)).toString();
+    data.Total[index] = (
+        parseFloat(data.Total[index]) + parseFloat(status)
+    ).toString();
     if (opponent) {
         const opponentIndex = data.Players.indexOf(opponent);
         data[round][opponentIndex] = (status === 0.5 ? 0.5 : 0).toString();
-        data.Total[opponentIndex] = (parseFloat(data.Total[opponentIndex]) + (parseFloat(status) === 0.5 ? 0.5 : 0))
-            .toString();
+        data.Total[opponentIndex] = (
+            parseFloat(data.Total[opponentIndex]) +
+            (parseFloat(status) === 0.5 ? 0.5 : 0)
+        ).toString();
     }
     document.getElementById("player").value = "";
     document.getElementById("player").focus();
@@ -58,7 +77,12 @@ function updateScore(status) {
     }
     addMatchToLog(round, player, opponent, result);
     updateTable();
-    if (!data[round].some(element => element === undefined || element === "" || element === null)) {
+    if (
+        !data[round].some(
+            (element) =>
+                element === undefined || element === "" || element === null
+        )
+    ) {
         generateMatchups();
     }
 }
@@ -122,17 +146,17 @@ function updateTable() {
     }
     try {
         container.removeChild(document.getElementById("table"));
-    } catch (e) { }
+    } catch (e) {}
     container.appendChild(table);
     try {
         let oldList = container.removeChild(document.getElementById("list"));
         container.appendChild(oldList);
-    } catch (e) { }
+    } catch (e) {}
 }
 
 function generateMatchups() {
     if (ROUNDS > 0) {
-        if (data[ROUNDS].some(element => element === undefined)) {
+        if (data[ROUNDS].some((element) => element === undefined)) {
             alert("Please fill out all of the scores for the current round!");
             return;
         }
@@ -145,12 +169,12 @@ function generateMatchups() {
     newRound();
     try {
         document.getElementById("list").remove();
-    } catch (e) { }
+    } catch (e) {}
     let players = [];
     for (let i = 0; i < data.Players.length; i++) {
         players.push({
             name: data.Players[i],
-            score: parseFloat(data.Total[i])
+            score: parseFloat(data.Total[i]),
         });
     }
     // Sort players by score in descending order
@@ -165,7 +189,10 @@ function generateMatchups() {
         if (!players[i].matched) {
             // Find the next highest-scoring player who has not yet been matched
             for (let j = i + 1; j < players.length; j++) {
-                if (!players[j].matched && players[j].score === players[i].score) {
+                if (
+                    !players[j].matched &&
+                    players[j].score === players[i].score
+                ) {
                     // Add the current player and the next highest-scoring player to the matchedPlayers array
                     matchedPlayers.push([players[i].name, players[j].name]);
                     // Mark both players as matched
@@ -176,7 +203,10 @@ function generateMatchups() {
             }
             // If there is an odd number of players with the same score, one will be left unmatched
             // In this case, we will just match that player with the next unmatched player with a lower score
-            if (i === players.length - 1 || players[i].score !== players[i + 1].score) {
+            if (
+                i === players.length - 1 ||
+                players[i].score !== players[i + 1].score
+            ) {
                 for (let j = i + 1; j < players.length; j++) {
                     if (!players[j].matched) {
                         matchedPlayers.push([players[i].name, players[j].name]);
@@ -188,7 +218,9 @@ function generateMatchups() {
             }
         }
     }
-    matchedPlayers.forEach(innerArr => innerArr.sort(() => Math.random() - 0.5))
+    matchedPlayers.forEach((innerArr) =>
+        innerArr.sort(() => Math.random() - 0.5)
+    );
     placeMatchups(matchedPlayers);
 }
 
@@ -204,17 +236,21 @@ function placeMatchups(matchedPlayers) {
     ol.onclick = playerClicked;
     container.appendChild(ol);
     for (let i = 0; i < data.Players.length; i++) {
-        let notInArray = matchedPlayers.every(subArray => !subArray.includes(data.Players[i]));
+        let notInArray = matchedPlayers.every(
+            (subArray) => !subArray.includes(data.Players[i])
+        );
         if (notInArray) {
             const li = document.createElement("li");
             li.innerHTML = `<a class="player">${data.Players[i]}</a> has a bye`;
             ol.appendChild(li);
-            addMatchToLog(ROUNDS, data.Players[i], null, "bye")
+            addMatchToLog(ROUNDS, data.Players[i], null, "bye");
             const ind = data.Players.indexOf(data.Players[i]);
             for (let j = 1; j <= ROUNDS; j++) {
                 if (!data[j][ind]) {
                     data[j][ind] = 0.5;
-                    data.Total[ind] = (parseFloat(data.Total[ind]) + 0.5).toString();
+                    data.Total[ind] = (
+                        parseFloat(data.Total[ind]) + 0.5
+                    ).toString();
                     break;
                 }
             }
@@ -237,7 +273,7 @@ function modifyDatalist() {
 
 function addPlayer() {
     const input = document.getElementById("player");
-    const name = input.value
+    const name = input.value;
     input.select();
     if (!name) return;
     if (data.Players.includes(name)) return;
@@ -253,7 +289,7 @@ function addPlayer() {
 
 function removePlayer() {
     const input = document.getElementById("player");
-    const name = input.value
+    const name = input.value;
     input.select();
     if (!name) return;
     if (!data.Players.includes(name)) return;
@@ -270,10 +306,11 @@ function removePlayer() {
 
 function updateSaveNames() {
     let savedNames = Object.keys(localStorage);
-    let options = savedNames.map(name => `<option value="${name}"></option>`).join('');
+    let options = savedNames
+        .map((name) => `<option value="${name}"></option>`)
+        .join("");
     document.getElementById("saveNames").innerHTML = options;
 }
-
 
 function exportData() {
     const saveName = document.getElementById("saveName").value;
@@ -285,7 +322,7 @@ function exportData() {
         rounds: ROUNDS,
         data: data,
         matchups: matchups,
-        logs: document.getElementById("log").innerHTML
+        logs: document.getElementById("log").innerHTML,
     });
     let dataExists = false;
     if (localStorage.getItem(saveName)) {
@@ -323,7 +360,7 @@ function importData() {
     ROUNDS = parsedJsonData.rounds || 0;
     document.getElementById("log").innerHTML = parsedJsonData.logs;
 
-    const c = document.getElementById("container")
+    const c = document.getElementById("container");
     if (c) {
         c.innerHTML = "";
     }
@@ -345,12 +382,20 @@ function importData() {
             if (!playerPlayed) continue;
             const player = data.Players[i];
             for (let i = 0; i < list.childNodes.length; i++) {
-                if (list.children[i].innerHTML.includes(`<a class="player">${player}</a> vs `) || list.children[i].innerHTML
-                    .includes(` vs <a class="player">${player}</a>`)) {
+                if (
+                    list.children[i].innerHTML.includes(
+                        `<a class="player">${player}</a> vs `
+                    ) ||
+                    list.children[i].innerHTML.includes(
+                        ` vs <a class="player">${player}</a>`
+                    )
+                ) {
                     if (list.children[i].innerHTML.includes("<strike>")) {
                         continue;
                     }
-                    list.children[i].innerHTML = `<strike>${list.children[i].innerHTML}</strike>`
+                    list.children[
+                        i
+                    ].innerHTML = `<strike>${list.children[i].innerHTML}</strike>`;
                     break;
                 }
             }
@@ -366,7 +411,9 @@ function clearData() {
         return;
     }
     const clear = confirm(
-        `Are you sure you want to delete ${keys.length} save${keys.length === 1 ? "" : "s"}?`
+        `Are you sure you want to delete ${keys.length} save${
+            keys.length === 1 ? "" : "s"
+        }?`
     );
     if (!clear) return;
     localStorage.clear();
@@ -380,17 +427,19 @@ function downloadData() {
         saveData[key] = JSON.parse(localStorage.getItem(key));
     }
 
-    const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(saveData, null, 2)], {
+        type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.style.display = "none";
     a.href = url;
     const currentDate = new Date();
     const year = currentDate.getFullYear();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const hour = currentDate.getHours().toString().padStart(2, '0');
-    const minute = currentDate.getMinutes().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = currentDate.getDate().toString().padStart(2, "0");
+    const hour = currentDate.getHours().toString().padStart(2, "0");
+    const minute = currentDate.getMinutes().toString().padStart(2, "0");
     const formattedDate = `${year}-${month}-${day}_${hour}-${minute}`;
     a.download = `chessexport_${formattedDate}.json`;
     document.body.appendChild(a);
@@ -435,7 +484,7 @@ function addMatchToLog(round, player1, player2, outcome) {
     if (logTable.hidden) logTable.hidden = false;
     const loggy = document.getElementById("loggy");
     const newRow = loggy.insertRow();
-    newRow.setAttribute('data-round', ROUNDS);
+    newRow.setAttribute("data-round", ROUNDS);
     newRow.insertCell().innerHTML = `<a>${round}</a>`;
     if (player2) {
         newRow.insertCell().innerHTML = `${player1} vs ${player2}`;
@@ -451,7 +500,7 @@ function modifyWhich(checked = false) {
     which.innerHTML = "";
     for (let i = 1; i <= ROUNDS; i++) {
         const label = document.createElement("label");
-        label.id = `label${i}`
+        label.id = `label${i}`;
         label.appendChild(document.createTextNode(i));
         const input = document.createElement("input");
         input.id = `checkbox${i}`;
@@ -487,7 +536,7 @@ function whenWhichChanged() {
         }
         const round = label.textContent;
         for (let j = 0; j < loggy.rows.length; j++) {
-            if (loggy.rows[j].getAttribute('data-round') === round) {
+            if (loggy.rows[j].getAttribute("data-round") === round) {
                 loggy.rows[j].hidden = !checkbox.checked;
             }
         }
@@ -518,4 +567,10 @@ function showHide(show, id) {
     modifyWhich(show);
     const element = document.getElementById(id);
     element.checked = false;
+}
+
+function toggleTheme() {
+    const body = document.querySelector("body");
+    body.classList.toggle("light-mode");
+    body.classList.toggle("dark-mode");
 }

@@ -20,15 +20,26 @@
         <script src="script.js"></script>
     </head>
     <body>
+        <button id="theme" onclick="toggleTheme();">Toggle theme</button>
         <h1>Chess Tournament Manager</h1>
         <div class="inner">
-            <input id="player" placeholder="Player name" list="playerNames" size=12>
+            <input
+                id="player"
+                placeholder="Player name"
+                list="playerNames"
+                size="12"
+            >
             <datalist id="playerNames"></datalist>
             <button onclick="addPlayer()">＋</button>
             <button onclick="removePlayer()">－</button>
         </div>
         <div class="inner">
-            <input id="saveName" placeholder="Save name" list="saveNames" size=12>
+            <input
+                id="saveName"
+                placeholder="Save name"
+                list="saveNames"
+                size="12"
+            >
             <datalist id="saveNames"></datalist>
             <button id="import" onclick="importData();">Load</button>
             <button id="export" onclick="exportData();">Save</button>
@@ -36,7 +47,12 @@
         <div class="inner">
             <button id="download" onclick="downloadData();">Download</button>
             <button id="upload">Upload</button>
-            <input type="file" accept=".json" id="uploadInput" style="display:none">
+            <input
+                type="file"
+                accept=".json"
+                id="uploadInput"
+                style="display:none"
+            >
             <button id="clear" onclick="clearData();">Clear</button>
         </div>
         <div id="scoreButtons" class="inner bottom">
