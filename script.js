@@ -325,11 +325,26 @@ function exportData() {
         alert("Please enter a name for the save!");
         return;
     }
+    const arr = [...document.getElementById("loggy").children];
+    const one = arr.shift();
+    const two = arr.shift();
+    const logs = {};
+    arr.forEach((el) => {
+        const round = el.children[0].innerHTML;
+        const match = el.children[1].innerHTML;
+        const result = el.children[2].innerHTML;
+        if (!logs[round]) {
+            logs[round] = {};
+        }
+        logs[round][match] = result;
+    });
+    console.log(logs);
+
     const jsonData = JSON.stringify({
         rounds: ROUNDS,
         data: data,
         matchups: matchups,
-        logs: document.getElementById("log").innerHTML,
+        logs: logs,
     });
     let dataExists = false;
     if (localStorage.getItem(saveName)) {
@@ -365,7 +380,27 @@ function importData() {
     data = parsedJsonData.data;
     matchups = parsedJsonData.matchups;
     ROUNDS = parsedJsonData.rounds || 0;
-    document.getElementById("log").innerHTML = parsedJsonData.logs;
+    const logs = parsedJsonData.logs;
+
+    const loggy = document.getElementById("loggy");
+    loggy.innerHTML = "";
+    const logHeader = document.createElement("tr");
+    logHeader.innerHTML = `<td class="long" colspan="3">Logs</td>`;
+    loggy.appendChild(logHeader);
+    const logHeader2 = document.createElement("tr");
+    logHeader2.innerHTML = `<td>Round</td><td>Match</td><td>Result</td>`;
+    loggy.appendChild(logHeader2);
+    for (let i = 1; i <= ROUNDS; i++) {
+        const roundInfo = logs[i];
+        for (let [key, value] of Object.entries(roundInfo)) {
+            const logRow = document.createElement("tr");
+            logRow.setAttribute("data-round", i);
+            logRow.hidden = true;
+            logRow.innerHTML = `<td>${i}</td><td>${key}</td><td>${value}</td>`;
+            loggy.appendChild(logRow);
+        }
+    }
+    document.getElementById("logTable").hidden = false;
 
     const c = document.getElementById("container");
     if (c) {
@@ -483,6 +518,61 @@ function hookUpload() {
 function playerClicked(event) {
     if (event.target.className === "player") {
         document.getElementById("player").value = event.target.textContent;
+    } else {
+        const target = event.target;
+
+        // Check if clicked element is a cell with a class
+        if (target.tagName === "TD" && target.classList.length > 0) {
+            // Get the round number from the table header
+            const round =
+                target.parentElement.parentElement.firstElementChild.children[
+                    target.cellIndex
+                ].textContent;
+
+            // Get the player name from the row header
+            const player = target.parentElement.firstElementChild.textContent;
+
+            // Get the row with data-round equal to the round number
+            const roundRows = document.querySelectorAll(
+                `[data-round="${round}"]`
+            );
+
+            // Loop through each row with data-round equal to the round number
+            for (let row of roundRows) {
+                let cells = row.children;
+                if (cells[1].textContent.includes(player)) {
+                    // Do something with the row
+                    const cell = cells[1];
+                    const winner = cells[2].textContent;
+                    if (winner === "") {
+                        return;
+                    }
+                    let content = `${cells[0].textContent}. ${cell.textContent}, ${winner}`;
+                    const popups = document.getElementsByClassName("popup");
+                    while (popups.length > 0) {
+                        popups[0].remove();
+                    }
+
+                    const popup = document.createElement("div");
+                    popup.classList.add("popup");
+                    popup.textContent = content;
+
+                    // append the popup to the body
+                    document.body.appendChild(popup);
+                    var cellRect = this.getBoundingClientRect();
+                    var popupRect = popup.getBoundingClientRect();
+                    var top = cellRect.top - popupRect.height - 5;
+                    var left =
+                        cellRect.left + (cellRect.width - popupRect.width) / 2;
+                    popup.style.top = top + "px";
+                    popup.style.left = left + "px";
+                    setTimeout(() => {
+                        popup.remove();
+                    }, 5000);
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -492,7 +582,7 @@ function addMatchToLog(round, player1, player2, outcome) {
     const loggy = document.getElementById("loggy");
     const newRow = loggy.insertRow();
     newRow.setAttribute("data-round", ROUNDS);
-    newRow.insertCell().innerHTML = `<a>${round}</a>`;
+    newRow.insertCell().innerHTML = `${round}`;
     if (player2) {
         newRow.insertCell().innerHTML = `${player1} vs ${player2}`;
     } else {
@@ -583,7 +673,23 @@ function toggleTheme() {
     const theme = document.getElementById("theme");
     if (body.classList.contains("light-mode")) {
         theme.innerHTML = "☀️";
+        localStorage.setItem("theme", "light-mode");
     } else {
         theme.innerHTML = "🌙";
+        localStorage.setItem("theme", "dark-mode");
     }
 }
+
+document.addEventListener("click", function (event) {
+    // Get all popups
+    var popups = document.querySelectorAll(".popup");
+    // Remove popups that are not the target or a child of the target or the table
+    for (var i = 0; i < popups.length; i++) {
+        var popup = popups[i];
+        var isTarget = popup == event.target || popup.contains(event.target);
+        var isTable = event.target.closest("#table");
+        if (!isTarget && !isTable) {
+            popup.remove();
+        }
+    }
+});

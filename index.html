@@ -61,6 +61,7 @@
             <button onclick="updateScore(0.5)" hidden>0.5</button>
         </div>
         <script>
+            document.body.className = localStorage.getItem("theme") || "light-mode";
             hookUpload();
             updateSaveNames();
             window.onbeforeunload = function() {
@@ -95,3 +96,33 @@
         </div>
     </body>
 </html>
+<!-- 
+<tr data-round="1" hidden="">
+    <td>
+        <a>1</a>
+    </td>
+    <td>b vs a</td>
+    <td>b won</td>
+</tr>
+<tr data-round="1" hidden="">
+    <td>
+        <a>1</a>
+    </td>
+    <td>c vs d</td>
+    <td>c won</td>
+</tr>
+<tr data-round="2" hidden="">
+    <td>
+        <a>2</a>
+    </td>
+    <td>b vs c</td>
+    <td>draw</td>
+</tr>
+<tr data-round="2" hidden="">
+    <td>
+        <a>2</a>
+    </td>
+    <td>a vs d</td>
+    <td>a won</td>
+</tr> 
+-->
