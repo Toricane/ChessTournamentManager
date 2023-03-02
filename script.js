@@ -186,6 +186,11 @@ function generateMatchups() {
     }
     // Sort players by score in descending order
     players.sort((a, b) => b.score - a.score);
+    let bye;
+    if (players.length % 2 === 1) {
+        const randomIndex = Math.floor(Math.random() * players.length);
+        bye = players.splice(randomIndex, 1)[0];
+    }
 
     // Create an empty array to store the matched players
     const matchedPlayers = [];
@@ -252,14 +257,11 @@ function placeMatchups(matchedPlayers) {
             ol.appendChild(li);
             addMatchToLog(ROUNDS, data.Players[i], null, "bye");
             const ind = data.Players.indexOf(data.Players[i]);
-            for (let j = 1; j <= ROUNDS; j++) {
-                if (!data[j][ind]) {
-                    data[j][ind] = 0.5;
-                    data.Total[ind] = (
-                        parseFloat(data.Total[ind]) + 0.5
-                    ).toString();
-                    break;
-                }
+            if (!data[ROUNDS][ind]) {
+                data[ROUNDS][ind] = 0.5;
+                data.Total[ind] = (
+                    parseFloat(data.Total[ind]) + 0.5
+                ).toString();
             }
         }
     }
@@ -326,8 +328,8 @@ function exportData() {
         return;
     }
     const arr = [...document.getElementById("loggy").children];
-    const one = arr.shift();
-    const two = arr.shift();
+    arr.shift();
+    arr.shift();
     const logs = {};
     arr.forEach((el) => {
         const round = el.children[0].innerHTML;
