@@ -7,20 +7,31 @@
     --text-color: #000000;
     --link-color: #007bff;
     --shadow-color: rgba(0, 0, 0, 0.5);
+    --button-color: #ffffff;
+    --button-hover-color: #5ec6f0;
+    --button-border-color: #000000;
 }
 
-.light-mode {
+.light {
     --bg-color: #ffffff;
-    --text-color: #000000;
+    --text-color: #312e2b;
     --link-color: #007bff;
     --shadow-color: rgba(0, 0, 0, 0.3);
+    --button-color: #ffffff;
+    --button-hover-color: #f0f0f0;
+    --button-border-color: #ffffff;
+    --button-shadow-color: #c7c6c5;
 }
 
-.dark-mode {
-    --bg-color: #000000;
+.dark {
+    --bg-color: #312e2b;
     --text-color: #ffffff;
     --link-color: #00bfff;
     --shadow-color: rgba(255, 255, 255, 0.3);
+    --button-color: #272522;
+    --button-hover-color: #3b3936;
+    --button-border-color: #272522;
+    --button-shadow-color: #1d1c1a;
 }
 
 body {
@@ -48,20 +59,21 @@ h1,
 
 button {
     transition-duration: 0.4s;
-    background-color: var(--bg-color);
+    background-color: var(--button-color);
     color: var(--text-color);
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 24px;
-    padding: 0em 0.5em;
-    border: 1px solid var(--text-color);
+    padding: 0.1em 0.5em;
+    border: 0px solid var(--text-color);
     margin: 4px;
     cursor: pointer;
+    box-shadow: 0px 6px 0px var(--button-shadow-color);
 }
 
 button:hover {
-    background-color: #5ec6f0;
-    color: white;
-    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    background-color: var(--button-hover-color);
+    /* color: var(--text-color); */
+    /* box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19); */
 }
 
 #theme {
@@ -81,10 +93,11 @@ button:hover {
 input {
     font-size: 16px;
     border-radius: 12px;
-    padding: 8px;
-    margin: 8px;
-    background-color: var(--bg-color);
+    padding: 0.1em 0.5em;
+    margin: 4px;
+    background-color: var(--button-hover-color);
     color: var(--text-color);
+    border: 1px solid var(--button-shadow-color);
 }
 
 
@@ -134,67 +147,70 @@ thead th {
 }
 
 tbody th {
-    background: #FFF;
-    border-right: 1px solid #CCC;
+    background: var(--button-shadow-color);
+    font-weight: 512;
+    /* border-right: 1px solid #CCC; */
     /* Browsers tend to drop borders on sticky elements, so we emulate the border-right using a box-shadow to ensure it stays: */
-    box-shadow: 1px 0 0 0 #ccc;
+    /* box-shadow: 1px 0 0 0 #ccc; */
 }
 
 table {
-    border: 1px solid #CCC;
-    border-collapse: collapse;
+    border-radius: 8px !important;
+    /* border: 1px solid #CCC; */
+    /* border-collapse: collapse; */
 }
 
 td,
 th {
-    border: 1px solid #CCC;
+    /* border: 1px solid #CCC; */
+    background-color: var(--button-color);
     padding: 0.5em;
     font-size: 16px;
 }
 
 /* Light mode */
-.light-mode {
+/* .light-mode {
     background-color: #fff;
     color: #333;
-}
+} */
 
-.light-mode td.win {
+.light td.win {
     background-color: rgb(198, 239, 206);
     /* green */
     color: #006100;
 }
 
-.light-mode td.loss {
+.light td.loss {
     background-color: rgb(255, 199, 206);
     /* red */
     color: #9c0006;
 }
 
-.light-mode td.tie {
+.light td.tie {
     background-color: rgb(255, 235, 156);
     /* yellow */
     color: #9c5700;
 }
 
 /* Dark mode */
-.dark-mode {
+/* .dark-mode {
     background-color: #000;
     color: #eee;
-}
+} */
 
-.dark-mode td.win {
+.dark td.win {
     background-color: rgba(0, 97, 0, 0.5);
     /* dark green */
     color: #c6efce;
 }
 
-.dark-mode td.loss {
+.dark td.loss {
     background-color: rgba(156, 0, 6, 0.5);
     /* dark red */
     color: #ffc7ce;
 }
 
-.dark-mode td.tie {
+.dark td.tie {
     background-color: rgba(156, 87, 0, 0.5);
     /* dark yellow */
     color: #ffeb9c;

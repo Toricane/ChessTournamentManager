@@ -15,12 +15,24 @@
         <meta name="twitter:description" content="Manage chess tournaments with this website!">
         <meta name="og:title" content="Chess Tournament Manager">
         <meta name="og:description" content="Manage chess tournaments with this website!">
+        <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="style.css">
         <link rel="icon" type="image/x-icon" href="./favicon.ico">
         <script src="script.js"></script>
     </head>
-    <body class="light-mode">
-        <button id="theme" onclick="toggleTheme();">☀️</button>
+    <body class="light">
+        <button id="theme" onclick="toggleTheme();"></button>
+        <script>
+            if (localStorage.getItem("theme") === "light") {
+                const sun = document.createElement("img");
+                sun.src = "emoji/sun.svg";
+                document.getElementById("theme").appendChild(sun);
+            } else {
+                const moon = document.createElement("img");
+                moon.src = "emoji/moon.svg";
+                document.getElementById("theme").appendChild(moon);
+            }
+        </script>
         <h1>Chess Tournament Manager</h1>
         <div class="inner">
             <input
@@ -30,8 +42,26 @@
                 size="12"
             >
             <datalist id="playerNames"></datalist>
-            <button onclick="addPlayer()">＋</button>
-            <button onclick="removePlayer()">－</button>
+            <!-- <button onclick="addPlayer()">＋</button>
+            <button onclick="removePlayer()">－</button> -->
+            <!-- <button onclick="addPlayer()">➕</button>
+            <button onclick="removePlayer()">➖</button> -->
+            <button onclick="addPlayer()">
+                <img
+                    src="emoji/plus.svg"
+                    width="20"
+                    height="20"
+                    alt="➕"
+                >
+            </button>
+            <button onclick="removePlayer()">
+                <img
+                    src="emoji/minus.svg"
+                    width="20"
+                    height="20"
+                    alt="➖"
+                >
+            </button>
         </div>
         <div class="inner">
             <input
@@ -41,22 +71,64 @@
                 size="12"
             >
             <datalist id="saveNames"></datalist>
-            <button id="import" onclick="importData();">Load</button>
-            <button id="export" onclick="exportData();">Save</button>
+            <button id="import" onclick="importData();">
+                <img
+                    src="emoji/load.svg"
+                    width="20"
+                    height="20"
+                    alt="🔁"
+                >
+            </button>
+            <button id="export" onclick="exportData();">
+                <img
+                    src="emoji/save.svg"
+                    width="20"
+                    height="20"
+                    alt="💾"
+                >
+            </button>
         </div>
         <div class="inner">
-            <button id="download" onclick="downloadData();">Download</button>
-            <button id="upload">Upload</button>
+            <button id="download" onclick="downloadData();">
+                <img
+                    src="emoji/download.svg"
+                    width="20"
+                    height="20"
+                    alt="📥"
+                >
+            </button>
+            <button id="upload">
+                <img
+                    src="emoji/upload.svg"
+                    width="20"
+                    height="20"
+                    alt="📤"
+                >
+            </button>
             <input
                 type="file"
                 accept=".json"
                 id="uploadInput"
                 style="display:none"
             >
-            <button id="clear" onclick="clearData();">Clear</button>
+            <button id="clear" onclick="clearData();">
+                <img
+                    src="emoji/trash.svg"
+                    width="20"
+                    height="20"
+                    alt="🗑️"
+                >
+            </button>
         </div>
         <div id="scoreButtons" class="inner bottom">
-            <button id="pair" onclick="generateMatchups()">Pair</button>
+            <button id="pair" onclick="generateMatchups()">
+                <img
+                    src="emoji/swords.svg"
+                    width="20"
+                    height="20"
+                    alt="⚔"
+                >
+            </button>
             <button onclick="updateScore(1)" hidden>1</button>
             <button onclick="updateScore(0.5)" hidden>0.5</button>
         </div>
@@ -84,12 +156,12 @@
             <table id="logTable" hidden>
                 <tbody id="loggy">
                     <tr>
-                        <td class="long" colspan="3">Logs</td>
+                        <th class="long" colspan="3">Logs</th>
                     </tr>
                     <tr>
-                        <td>Round</td>
-                        <td>Match</td>
-                        <td>Result</td>
+                        <th>Round</th>
+                        <th>Match</th>
+                        <th>Result</th>
                     </tr>
                 </tbody>
             </table>

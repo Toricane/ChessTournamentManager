@@ -125,14 +125,23 @@ function updateTable() {
     table.id = "table";
     table.onclick = playerClicked;
     let header = table.insertRow();
-    let hCell = header.insertCell();
+    let hCell = document.createElement("th");
+    // let hCell = header.insertCell();
     hCell.innerHTML = "Players";
+    hCell.setAttribute("scope", "row");
+    header.appendChild(hCell);
     for (let i = 1; i <= ROUNDS; i++) {
-        hCell = header.insertCell();
+        hCell = document.createElement("th");
+        // let hCell = header.insertCell();
         hCell.innerHTML = i;
+        hCell.setAttribute("scope", "row");
+        header.appendChild(hCell);
     }
-    hCell = header.insertCell();
+    hCell = document.createElement("th");
+    // let hCell = header.insertCell();
     hCell.innerHTML = "Total";
+    hCell.setAttribute("scope", "row");
+    header.appendChild(hCell);
     for (let i = 0; i < data.Players.length; i++) {
         let row = table.insertRow();
         let cell = row.insertCell();
@@ -387,10 +396,10 @@ function importData() {
     const loggy = document.getElementById("loggy");
     loggy.innerHTML = "";
     const logHeader = document.createElement("tr");
-    logHeader.innerHTML = `<td class="long" colspan="3">Logs</td>`;
+    logHeader.innerHTML = `<th class="long" colspan="3">Logs</td>`;
     loggy.appendChild(logHeader);
     const logHeader2 = document.createElement("tr");
-    logHeader2.innerHTML = `<td>Round</td><td>Match</td><td>Result</td>`;
+    logHeader2.innerHTML = `<th>Round</th><th>Match</th><th>Result</th>`;
     loggy.appendChild(logHeader2);
     for (let i = 1; i <= ROUNDS; i++) {
         const roundInfo = logs[i];
@@ -465,6 +474,11 @@ function clearData() {
 }
 
 function downloadData() {
+    const keys = Object.keys(localStorage);
+    if (!keys.length) {
+        alert("No saves to download!");
+        return;
+    }
     const saveData = {};
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -670,15 +684,20 @@ function showHide(show, id) {
 
 function toggleTheme() {
     const body = document.querySelector("body");
-    body.classList.toggle("light-mode");
-    body.classList.toggle("dark-mode");
+    body.classList.toggle("light");
+    body.classList.toggle("dark");
     const theme = document.getElementById("theme");
-    if (body.classList.contains("light-mode")) {
-        theme.innerHTML = "☀️";
-        localStorage.setItem("theme", "light-mode");
+    theme.innerHTML = "";
+    if (body.classList.contains("light")) {
+        const sun = document.createElement("img");
+        sun.src = "emoji/sun.svg";
+        theme.appendChild(sun);
+        localStorage.setItem("theme", "light");
     } else {
-        theme.innerHTML = "🌙";
-        localStorage.setItem("theme", "dark-mode");
+        const moon = document.createElement("img");
+        moon.src = "emoji/moon.svg";
+        theme.appendChild(moon);
+        localStorage.setItem("theme", "dark");
     }
 }
 
