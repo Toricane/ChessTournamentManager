@@ -26,7 +26,12 @@
                 const sun = document.createElement("img");
                 sun.src = "emoji/sun.svg";
                 document.getElementById("theme").appendChild(sun);
+            } else if (localStorage.getItem("theme") === "dark") {
+                const moon = document.createElement("img");
+                moon.src = "emoji/moon.svg";
+                document.getElementById("theme").appendChild(moon);
             } else {
+                localStorage.setItem("theme", "dark");
                 const moon = document.createElement("img");
                 moon.src = "emoji/moon.svg";
                 document.getElementById("theme").appendChild(moon);

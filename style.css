@@ -3,13 +3,14 @@
 }
 
 :root {
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --link-color: #007bff;
-    --shadow-color: rgba(0, 0, 0, 0.5);
-    --button-color: #ffffff;
-    --button-hover-color: #5ec6f0;
-    --button-border-color: #000000;
+    --bg-color: #312e2b;
+    --text-color: #ffffff;
+    --link-color: #00bfff;
+    --shadow-color: rgba(255, 255, 255, 0.3);
+    --button-color: #272522;
+    --button-hover-color: #3b3936;
+    --button-border-color: #272522;
+    --button-shadow-color: #1d1c1a;
 }
 
 .light {
