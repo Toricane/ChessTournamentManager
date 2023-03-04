@@ -20,7 +20,7 @@
         <link rel="icon" type="image/x-icon" href="./favicon.ico">
         <script src="script.js"></script>
     </head>
-    <body class="light">
+    <body class="dark">
         <button id="theme" onclick="toggleTheme();"></button>
         <script>
             if (localStorage.getItem("theme") === "light") {
@@ -42,10 +42,6 @@
                 size="12"
             >
             <datalist id="playerNames"></datalist>
-            <!-- <button onclick="addPlayer()">＋</button>
-            <button onclick="removePlayer()">－</button> -->
-            <!-- <button onclick="addPlayer()">➕</button>
-            <button onclick="removePlayer()">➖</button> -->
             <button onclick="addPlayer()">
                 <img
                     src="emoji/plus.svg"
