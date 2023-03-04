@@ -39,6 +39,11 @@
         </script>
         <h1>Chess Tournament Manager</h1>
         <div class="inner">
+            <div id="info-container">
+                Hover over or tap a button for more information
+            </div>
+        </div>
+        <div class="inner">
             <input
                 id="player"
                 placeholder="Player name"
@@ -46,7 +51,7 @@
                 size="12"
             >
             <datalist id="playerNames"></datalist>
-            <button onclick="addPlayer()">
+            <button id="add" onclick="addPlayer()">
                 <img
                     src="emoji/plus.svg"
                     width="20"
@@ -54,7 +59,7 @@
                     alt="➕"
                 >
             </button>
-            <button onclick="removePlayer()">
+            <button id="remove" onclick="removePlayer()">
                 <img
                     src="emoji/minus.svg"
                     width="20"
@@ -129,13 +134,34 @@
                     alt="⚔"
                 >
             </button>
-            <button onclick="updateScore(1)" hidden>1</button>
-            <button onclick="updateScore(0.5)" hidden>0.5</button>
+            <button id="1" onclick="updateScore(1)" hidden>
+                <img
+                    src="emoji/win.png"
+                    width="20"
+                    height="20"
+                    alt="🏆"
+                >
+            </button>
+            <button id="0.5" onclick="updateScore(0.5)" hidden>
+                <img
+                    src="emoji/draw_dark_mode.png"
+                    width="20"
+                    height="20"
+                    alt="🤝"
+                    id="drawIcon"
+                >
+            </button>
+            <script>
+                if (localStorage.getItem("theme") === "light") {
+                    document.getElementById("drawIcon").src = "emoji/draw_light_mode.png";
+                }
+            </script>
         </div>
         <script>
-            document.body.className = localStorage.getItem("theme") || "light-mode";
+            document.body.className = localStorage.getItem("theme") || "dark";
             hookUpload();
             updateSaveNames();
+            initButtons();
             window.onbeforeunload = function() {
                 return "Are you sure you would like to quit the current tournament session?";
             };

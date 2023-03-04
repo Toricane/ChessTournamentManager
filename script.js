@@ -324,6 +324,7 @@ function removePlayer() {
 
 function updateSaveNames() {
     let savedNames = Object.keys(localStorage);
+    savedNames.splice(savedNames.indexOf("theme"), 1);
     let options = savedNames
         .map((name) => `<option value="${name}"></option>`)
         .join("");
@@ -334,6 +335,10 @@ function exportData() {
     const saveName = document.getElementById("saveName").value;
     if (!saveName) {
         alert("Please enter a name for the save!");
+        return;
+    }
+    if (saveName === "theme") {
+        alert("Please enter a different name for the save!");
         return;
     }
     const arr = [...document.getElementById("loggy").children];
@@ -381,6 +386,10 @@ function importData() {
         alert("Please enter a name for the save!");
         return;
     }
+    if (saveName === "theme") {
+        alert("Please enter a different name for the save!");
+        return;
+    }
     const jsonData = localStorage.getItem(saveName);
     if (!jsonData) {
         alert("No save with that name exists!");
@@ -403,6 +412,9 @@ function importData() {
     loggy.appendChild(logHeader2);
     for (let i = 1; i <= ROUNDS; i++) {
         const roundInfo = logs[i];
+        if (!roundInfo) {
+            continue;
+        }
         for (let [key, value] of Object.entries(roundInfo)) {
             const logRow = document.createElement("tr");
             logRow.setAttribute("data-round", i);
@@ -458,30 +470,58 @@ function importData() {
 }
 
 function clearData() {
-    const keys = Object.keys(localStorage);
+    let keys = Object.keys(localStorage);
+    keys.splice(keys.indexOf("theme"), 1);
     if (!keys.length) {
         alert("No saves to delete!");
         return;
     }
-    const clear = confirm(
-        `Are you sure you want to delete ${keys.length} save${
-            keys.length === 1 ? "" : "s"
-        }?`
-    );
+    const saveName = document.getElementById("saveName").value;
+    if (saveName) {
+        if (!keys.includes(saveName)) {
+            alert("No save with that name exists!");
+            return;
+        }
+        keys = [saveName];
+    }
+    let clear;
+    if (keys.length === 1) {
+        clear = confirm(`Are you sure you want to delete ${keys[0]}?`);
+    } else {
+        clear = confirm(
+            `Are you sure you want to delete ${keys.length} save${
+                keys.length === 1 ? "" : "s"
+            }?`
+        );
+    }
     if (!clear) return;
-    localStorage.clear();
+    for (let key of keys) {
+        localStorage.removeItem(key);
+    }
     updateSaveNames();
 }
 
 function downloadData() {
-    const keys = Object.keys(localStorage);
+    let keys = Object.keys(localStorage);
     if (!keys.length) {
         alert("No saves to download!");
         return;
     }
+    const saveName = document.getElementById("saveName").value;
+    if (saveName === "theme") {
+        alert("Please enter a different name for the save!");
+        return;
+    }
+    if (saveName) {
+        if (!keys.includes(saveName)) {
+            alert("No save with that name exists!");
+            return;
+        }
+        keys = [saveName];
+    }
+    keys.splice(keys.indexOf("theme"), 1);
     const saveData = {};
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
+    for (let key of keys) {
         saveData[key] = JSON.parse(localStorage.getItem(key));
     }
 
@@ -692,11 +732,13 @@ function toggleTheme() {
         const sun = document.createElement("img");
         sun.src = "emoji/sun.svg";
         theme.appendChild(sun);
+        document.getElementById("drawIcon").src = "emoji/draw_light_mode.png";
         localStorage.setItem("theme", "light");
     } else {
         const moon = document.createElement("img");
         moon.src = "emoji/moon.svg";
         theme.appendChild(moon);
+        document.getElementById("drawIcon").src = "emoji/draw_dark_mode.png";
         localStorage.setItem("theme", "dark");
     }
 }
@@ -714,3 +756,87 @@ document.addEventListener("click", function (event) {
         }
     }
 });
+
+function giveInfo(id) {
+    switch (id) {
+        case "theme":
+            return "Toggle between light and dark mode";
+        case "add":
+            return "Add a new player";
+        case "remove":
+            return "Remove a player";
+        case "import":
+            return "Load a saved tournament";
+        case "export":
+            return "Save the current tournament";
+        case "download":
+            return "Download a specified save or all saves";
+        case "upload":
+            return "Upload a save file";
+        case "clear":
+            return "Clear a specified save or all saves";
+        case "pair":
+            return "Pair the players and start the tournament";
+        case "1":
+            return "Mark the selected player as the winner";
+        case "0.5":
+            return "Mark the selected player's match as a draw";
+    }
+}
+
+function initButtons() {
+    const buttons = document.querySelectorAll("button");
+    const infoContainer = document.getElementById("info-container");
+    let timeoutId;
+
+    // Add event listeners to all buttons
+    buttons.forEach((button) => {
+        button.addEventListener("mouseenter", () => {
+            // Show information about the button on desktop
+            clearTimeout(timeoutId);
+            infoContainer.textContent = giveInfo(button.id);
+            // infoContainer.style.display = "block";
+        });
+
+        button.addEventListener("mouseleave", () => {
+            // Hide the information container on desktop
+            // infoContainer.style.display = "none";
+            timeoutId = setTimeout(() => {
+                infoContainer.textContent =
+                    "Hover over or tap a button for more information";
+            }, 1000);
+        });
+
+        button.addEventListener("touchstart", () => {
+            // Show information about the button on mobile
+            clearTimeout(timeoutId);
+            infoContainer.textContent = giveInfo(button.id);
+            // infoContainer.style.display = "block";
+        });
+
+        button.addEventListener("touchend", () => {
+            // Hide the information container on mobile
+            // infoContainer.style.display = "none";
+            timeoutId = setTimeout(() => {
+                infoContainer.textContent =
+                    "Hover over or tap a button for more information";
+            }, 1000);
+        });
+
+        button.addEventListener("focus", () => {
+            // Show information about the button for accessibility
+            clearTimeout(timeoutId);
+            infoContainer.textContent = giveInfo(button.id);
+            // infoContainer.style.display = "block";
+        });
+
+        button.addEventListener("blur", () => {
+            // Hide the information container for accessibility
+            // infoContainer.style.display = "none";
+            timeoutId = setTimeout(() => {
+                infoContainer.textContent =
+                    "Hover over or tap a button for more information";
+            }, 1000);
+        });
+    });
+}
