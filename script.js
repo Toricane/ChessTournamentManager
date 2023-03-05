@@ -177,6 +177,10 @@ function generateMatchups() {
             return;
         }
     }
+    if (data.Players.length < 2) {
+        alert("Pairing requires at least two players!");
+        return;
+    }
     const scoreButtons = document.getElementById("scoreButtons");
     for (let i = 0; i < scoreButtons.children.length; i++) {
         scoreButtons.children[i].hidden = false;
