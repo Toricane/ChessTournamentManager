@@ -140,10 +140,9 @@ button:hover {
     /* change to whatever max height you want */
 }
 
-@media only screen and (max-width: 480px) {
-    .your-element {
+@media only screen and (max-width: 768px) {
+    .dropdown-content {
         width: 100%;
-        /* or any other value you want */
     }
 }
 
