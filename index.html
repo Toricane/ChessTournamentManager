@@ -38,9 +38,99 @@
             }
         </script>
         <h1>Chess Tournament Manager</h1>
-        <div class="inner">
-            <div id="info-container">
-                Hover over or tap a button for more information
+        <div id="dropdown-container">
+            <div id="dropdown" class="dropdown inner" onclick="document.getElementById('dropdown').classList.toggle('open');">
+                <div id="info-container" class="dropdown-header">
+                    Hover over or tap a button for more information
+                </div>
+                <div id="info" class="dropdown-content">
+                    <p>Welcome to the Chess Tournament Manager!</p>
+                    <p>To view descriptions of each button, please hover your cursor over them.</p>
+                    <p>To start a tournament:</p>
+                    <ul style="text-align: left;">
+                        <li>
+                            Add players one by one by inputting their names and pressing the
+                            <i>plus</i>
+                            button
+                        </li>
+                        <li>
+                            Click the
+                            <i>swords</i>
+                            button to pair the players
+                        </li>
+                        <li>
+                            When a match is complete, click the player name that won, 
+                            or any one of the player names of a drawn match, 
+                            and press the corresponding button
+                        </li>
+                    </ul>
+                    <p>To save your tournament:</p>
+                    <ul style="text-align: left;">
+                        <li>
+                            Input a name for your save and press the
+                            <i>save</i>
+                            button
+                        </li>
+                        <li>
+                            The tournament will be saved to your browser's local storage
+                        </li>
+                        <li>
+                            You can download your save by pressing the
+                            <i>download</i>
+                            button so you can store it on your computer and share with others
+                        </li>
+                    </ul>
+                    <p>To load a saved tournament:</p>
+                    <ul style="text-align: left;">
+                        <li>
+                            Enter the name of the save you want to load
+                        </li>
+                        <li>
+                            Press the
+                            <i>load</i>
+                            button
+                        </li>
+                    </ul>
+                    <p>To open a tournament that was downloaded to a file:</p>
+                    <ul style="text-align: left;">
+                        <li>
+                            Press the
+                            <i>upload</i>
+                            button
+                        </li>
+                        <li>
+                            Select the file you want to open
+                        </li>
+                        <li>
+                            Type in the name of the save you want to load
+                        </li>
+                        <li>
+                            Press the
+                            <i>load</i>
+                            button
+                        </li>
+                    </ul>
+                    <p>To delete a saved tournament:</p>
+                    <ul style="text-align: left;">
+                        <li>
+                            Enter the name of the save you want to delete
+                        </li>
+                        <li>
+                            Press the
+                            <i>delete</i>
+                            button
+                        </li>
+                        <li>
+                            Confirm the popup
+                        </li>
+                        <li>
+                            If no save name is inputted, all saves will be deleted
+                        </li>
+                        <li>
+                            The save will be deleted from your browser's local storage
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="inner">

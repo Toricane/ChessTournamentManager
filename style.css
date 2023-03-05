@@ -97,6 +97,49 @@ button:hover {
     justify-content: center;
 }
 
+#dropdown-container {
+    text-align: center;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-header {
+    cursor: pointer;
+    background-color: #1567ff73;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    /* right: 0; */
+    background-color: var(--button-hover-color);
+    overflow: auto;
+    max-height: 0;
+    transition: max-height 0.5s ease-out;
+    border-radius: 12px;
+    padding: 0 2em;
+    text-align: center;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    max-width: 600px;
+}
+
+.dropdown.open .dropdown-content {
+    max-height: 500px;
+    /* max-width: 600px; */
+    margin: 0 auto;
+    width: 600px;
+    /* change to whatever max height you want */
+}
+
 #theme {
     font-size: 24px;
     height: 48px;
