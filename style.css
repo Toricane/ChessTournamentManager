@@ -137,6 +137,7 @@ button:hover {
     /* max-width: 600px; */
     margin: 0 auto;
     max-width: 800px;
+    padding-bottom: 2em;
     /* change to whatever max height you want */
 }
 
