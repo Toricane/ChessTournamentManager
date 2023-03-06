@@ -285,7 +285,7 @@ function generateMatchups() {
     placeMatchups(matchedPlayers);
 }
 
-function placeMatchups(matchedPlayers) {
+function placeMatchups(matchedPlayers, full = false) {
     const container = document.getElementById("container");
     const ol = document.createElement("ol");
     matchedPlayers.forEach((arr, index) => {
@@ -316,19 +316,19 @@ function placeMatchups(matchedPlayers) {
     }
     matchups = matchedPlayers;
     console.log(ROUNDS);
-    unhideAutoRound(ROUNDS === 1);
+    unhideAutoRound(ROUNDS === 1, full);
     updateTable();
     modifyWhich();
 }
 
-function unhideAutoRound(first = false) {
+function unhideAutoRound(first = false, full = false) {
     const autoRound = document.getElementById("autoRound");
     const autoRoundLabel = document.getElementById("autoRoundLabel");
     if (autoRoundLabel.hidden) {
         autoRoundLabel.hidden = false;
     }
     autoRound.checked = !autoRound.checked;
-    autoRound.checked = first ? true : !autoRound.checked;
+    autoRound.checked = full ? false : first ? true : !autoRound.checked;
 }
 
 function autoRoundClick() {
@@ -492,7 +492,10 @@ function importData() {
         updateTable();
         return;
     }
-    placeMatchups(matchups);
+    const full = !data[ROUNDS].some(
+        (el) => el === undefined || el === null || el === ""
+    );
+    placeMatchups(matchups, full);
     const scoreButtons = document.getElementById("scoreButtons");
     for (let i = 0; i < scoreButtons.children.length; i++) {
         scoreButtons.children[i].hidden = false;
