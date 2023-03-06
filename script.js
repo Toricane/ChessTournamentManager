@@ -700,7 +700,13 @@ function modifyWhich(checked = false) {
     const select = document.createElement("select");
     select.id = "whichSelect";
     select.multiple = true;
-    for (let i = 1; i <= ROUNDS; i++) {
+    let roundsCopy = ROUNDS;
+    if (
+        data[ROUNDS].every((el) => el === undefined || el === null || el === "")
+    ) {
+        roundsCopy--;
+    }
+    for (let i = 1; i <= roundsCopy; i++) {
         const option = document.createElement("option");
         option.id = `option${i}`;
         option.value = i;
