@@ -256,7 +256,9 @@
                 return "Are you sure you would like to quit the current tournament session?";
             };
         </script>
-        <div id="container" class="inner bottom"></div>
+        <div id="container" class="inner bottom">
+            <div id="table-container" class="inner bottom"></div>
+        </div>
         <div id="show_hide" class="inner bottom">
             <label hidden>
                 Show all
@@ -270,7 +272,7 @@
         <div id="which" class="inner bottom"></div>
         <div id="log" class="inner">
             <table id="logTable" hidden>
-                <tbody id="loggy">
+                <thead id="logHead">
                     <tr>
                         <th class="long" colspan="3">Logs</th>
                     </tr>
@@ -279,7 +281,8 @@
                         <th>Match</th>
                         <th>Result</th>
                     </tr>
-                </tbody>
+                </thead>
+                <tbody id="loggy"></tbody>
             </table>
         </div>
     </body>

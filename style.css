@@ -63,6 +63,7 @@ h1, h2,
 #container {
     /* flex-direction: column; */
     align-items: flex-start;
+    overflow-x: auto;
 }
 
 button {
@@ -186,9 +187,9 @@ div.container {
    * and top, right, or left to choose which edge to stick to: */
 
 thead th {
-    position: -webkit-sticky;
+    /* position: -webkit-sticky; */
     /* for Safari */
-    position: sticky;
+    /* position: sticky; */
     top: 0;
 }
 
@@ -202,17 +203,23 @@ tbody th {
 
 /* To have the header in the first column stick to the left: */
 
-thead th:first-child {
+/* thead th:first-child {
     left: 0;
     z-index: 2;
 }
+
+td:first-child {
+    left: 0;
+    z-index: 2;
+} */
 
 
 /* Just to display it nicely: */
 
 thead th {
-    background: #000;
-    color: #FFF;
+    background: var(--button-shadow-color);
+    color: var(--text-color);
+    font-weight: 512;
     /* Ensure this stays above the emulated border right in tbody th {}: */
     z-index: 1;
 }
@@ -225,19 +232,13 @@ tbody th {
     /* box-shadow: 1px 0 0 0 #ccc; */
 }
 
-table {
-    border-radius: 8px !important;
-    /* border: 1px solid #CCC; */
-    /* border-collapse: collapse; */
-    box-shadow: 0px 6px 0px var(--button-shadow-color);
-}
-
 td,
 th {
     /* border: 1px solid #CCC; */
     background-color: var(--button-color);
     padding: 0.5em;
     font-size: 16px;
+    overflow-x: auto;
 }
 
 /* Light mode */
@@ -247,19 +248,19 @@ th {
 } */
 
 .light td.win {
-    background-color: rgb(198, 239, 206);
+    /* background-color: rgb(198, 239, 206); */
     /* green */
     color: #006100;
 }
 
 .light td.loss {
-    background-color: rgb(255, 199, 206);
+    /* background-color: rgb(255, 199, 206); */
     /* red */
     color: #9c0006;
 }
 
 .light td.tie {
-    background-color: rgb(255, 235, 156);
+    /* background-color: rgb(255, 235, 156); */
     /* yellow */
     color: #9c5700;
 }
@@ -271,19 +272,19 @@ th {
 } */
 
 .dark td.win {
-    background-color: rgba(0, 97, 0, 0.5);
+    /* background-color: rgba(0, 97, 0, 0.5); */
     /* dark green */
     color: #c6efce;
 }
 
 .dark td.loss {
-    background-color: rgba(156, 0, 6, 0.5);
+    /* background-color: rgba(156, 0, 6, 0.5); */
     /* dark red */
     color: #ffc7ce;
 }
 
 .dark td.tie {
-    background-color: rgba(156, 87, 0, 0.5);
+    /* background-color: rgba(156, 87, 0, 0.5); */
     /* dark yellow */
     color: #ffeb9c;
 }
@@ -341,9 +342,9 @@ input[type="checkbox"] {
 
 /* Popup styles */
 .popup {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* position: absolute; */
+    /* top: 0;
+    left: 0; */
     z-index: 9999;
     background-color: var(--bg-color);
     border: 1px solid var(--text-color);
@@ -351,4 +352,13 @@ input[type="checkbox"] {
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0 5px 5px var(--shadow-color);
+    transition: none !important;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+img {
+    cursor: pointer;
 }

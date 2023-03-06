@@ -124,7 +124,8 @@ function updateTable() {
     const table = document.createElement("table");
     table.id = "table";
     table.onclick = playerClicked;
-    let header = table.insertRow();
+    let thead = document.createElement("thead");
+    let header = thead.insertRow();
     let hCell = document.createElement("th");
     // let hCell = header.insertCell();
     hCell.innerHTML = "Players";
@@ -142,8 +143,10 @@ function updateTable() {
     hCell.innerHTML = "Total";
     hCell.setAttribute("scope", "row");
     header.appendChild(hCell);
+    table.appendChild(thead);
+    let tbody = document.createElement("tbody");
     for (let i = 0; i < data.Players.length; i++) {
-        let row = table.insertRow();
+        let row = tbody.insertRow();
         let cell = row.insertCell();
         cell.innerHTML = `<a class="player">${data.Players[i]}</a>`;
         for (let j = 1; j <= ROUNDS; j++) {
@@ -151,14 +154,46 @@ function updateTable() {
             cell.innerHTML = data[j][i] || "";
             if (parseFloat(cell.innerHTML) === 1) {
                 cell.classList.add("win");
+                cell.innerHTML = "";
+                const img = document.createElement("img");
+                img.src = "emoji/win.png";
+                img.alt = "1";
+                img.width = "20";
+                img.height = "20";
+                cell.appendChild(img);
             } else if (parseFloat(cell.innerHTML) === 0.5) {
                 cell.classList.add("tie");
+                cell.innerHTML = "";
+                const img = document.createElement("img");
+                const theme = document.body.className;
+                img.src = `emoji/draw_${theme}_mode.png`;
+                img.alt = "0.5";
+                img.width = "20";
+                img.height = "20";
+                cell.appendChild(img);
             } else if (parseFloat(cell.innerHTML) === 0) {
                 cell.classList.add("loss");
+                cell.innerHTML = "";
+                const img = document.createElement("img");
+                img.src = "emoji/loss.png";
+                img.alt = "0";
+                img.width = "20";
+                img.height = "20";
+                cell.appendChild(img);
             }
         }
         cell = row.insertCell();
         cell.innerHTML = data.Total[i] || "";
+    }
+    table.appendChild(tbody);
+    let images = table.getElementsByTagName("img");
+    for (let img of images) {
+        if ("1 0.5 0".includes(img.alt)) {
+            img.addEventListener("click", function (event) {
+                playerClicked(event);
+                event.stopPropagation();
+            });
+        }
     }
     try {
         container.removeChild(document.getElementById("table"));
@@ -408,12 +443,12 @@ function importData() {
 
     const loggy = document.getElementById("loggy");
     loggy.innerHTML = "";
-    const logHeader = document.createElement("tr");
-    logHeader.innerHTML = `<th class="long" colspan="3">Logs</td>`;
-    loggy.appendChild(logHeader);
-    const logHeader2 = document.createElement("tr");
-    logHeader2.innerHTML = `<th>Round</th><th>Match</th><th>Result</th>`;
-    loggy.appendChild(logHeader2);
+    // const logHeader = document.createElement("tr");
+    // logHeader.innerHTML = `<th class="long" colspan="3">Logs</td>`;
+    // loggy.appendChild(logHeader);
+    // const logHeader2 = document.createElement("tr");
+    // logHeader2.innerHTML = `<th>Round</th><th>Match</th><th>Result</th>`;
+    // loggy.appendChild(logHeader2);
     for (let i = 1; i <= ROUNDS; i++) {
         const roundInfo = logs[i];
         if (!roundInfo) {
@@ -579,15 +614,16 @@ function playerClicked(event) {
     if (event.target.className === "player") {
         document.getElementById("player").value = event.target.textContent;
     } else {
-        const target = event.target;
+        let target = event.target;
+        if (target.tagName === "IMG") {
+            target = target.parentElement;
+        }
 
         // Check if clicked element is a cell with a class
         if (target.tagName === "TD" && target.classList.length > 0) {
             // Get the round number from the table header
-            const round =
-                target.parentElement.parentElement.firstElementChild.children[
-                    target.cellIndex
-                ].textContent;
+            console.log(target.cellIndex);
+            const round = target.cellIndex;
 
             // Get the player name from the row header
             const player = target.parentElement.firstElementChild.textContent;
@@ -732,6 +768,14 @@ function toggleTheme() {
     body.classList.toggle("dark");
     const theme = document.getElementById("theme");
     theme.innerHTML = "";
+    let images = document.querySelectorAll('img[alt="0.5"]');
+    for (let image of images) {
+        if (body.classList.contains("light")) {
+            image.src = "emoji/draw_light_mode.png";
+        } else {
+            image.src = "emoji/draw_dark_mode.png";
+        }
+    }
     if (body.classList.contains("light")) {
         const sun = document.createElement("img");
         sun.src = "emoji/sun.svg";
