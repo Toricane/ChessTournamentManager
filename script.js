@@ -715,18 +715,6 @@ function modifyWhich(checked = false) {
         option.appendChild(document.createTextNode(i));
         select.appendChild(option);
     }
-    // for (let i = 1; i <= ROUNDS; i++) {
-    //     const label = document.createElement("label");
-    //     label.id = `label${i}`;
-    //     label.appendChild(document.createTextNode(i));
-    //     const input = document.createElement("input");
-    //     input.id = `checkbox${i}`;
-    //     input.type = "checkbox";
-    //     input.checked = checked;
-    //     input.onclick = whenWhichChanged;
-    //     label.appendChild(input);
-    //     which.appendChild(label);
-    // }
     which.appendChild(select);
     const show = document.getElementById("show");
     const hide = document.getElementById("hide");
@@ -738,48 +726,6 @@ function modifyWhich(checked = false) {
     hide.parentElement.hidden = !checked;
     whenWhichChanged();
 }
-
-// function whenWhichChanged() {
-//     const which = document.getElementById("which");
-//     const loggy = document.getElementById("loggy");
-//     let numChecked = 0;
-//     let numUnchecked = 0;
-//     for (let i = 0; i < which.children.length; i++) {
-//         const label = document.getElementById(`label${i + 1}`);
-//         const checkbox = document.getElementById(`checkbox${i + 1}`);
-//         if (checkbox.checked) {
-//             numChecked++;
-//         } else {
-//             numUnchecked++;
-//         }
-//         const round = label.textContent;
-//         for (let j = 0; j < loggy.rows.length; j++) {
-//             if (loggy.rows[j].getAttribute("data-round") === round) {
-//                 loggy.rows[j].hidden = !checkbox.checked;
-//             }
-//         }
-//     }
-//     const show = document.getElementById("show");
-//     const hide = document.getElementById("hide");
-//     if (numUnchecked === 0) {
-//         show.checked = true;
-//         show.hidden = true;
-//         show.parentElement.hidden = true;
-//     }
-//     if (numChecked === 0) {
-//         hide.checked = true;
-//         hide.hidden = true;
-//         hide.parentElement.hidden = true;
-//     }
-//     if (numChecked > 0 && numUnchecked > 0) {
-//         show.hidden = false;
-//         show.parentElement.hidden = false;
-//         hide.hidden = false;
-//         hide.parentElement.hidden = false;
-//     }
-//     show.checked = false;
-//     hide.checked = false;
-// }
 
 function whenWhichChanged() {
     const select = document.getElementById("whichSelect");
