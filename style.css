@@ -362,3 +362,33 @@ input[type="checkbox"] {
 img {
     cursor: pointer;
 }
+
+select {
+    padding: 5px;
+    /* width: 200px; */
+    background-color: var(--button-color);
+    color: var(--text-color);
+    box-shadow: 0px 6px 0px var(--button-shadow-color);
+    border: 0px solid var(--button-shadow-color);
+    border-radius: 12px;
+    height: 3em;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: inline-block;
+    margin-top: 0.5em;
+}
+
+select option {
+    padding: 5px;
+    display: inline-block;
+    color: var(--text-color);
+    background-color: var(--button-color);
+}
+
+select option:selected {
+    background-color: var(--button-hover-color);
+}
+
+select option:hover {
+    background-color: var(--button-hover-color);
+}
