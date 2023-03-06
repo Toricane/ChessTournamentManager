@@ -81,7 +81,8 @@ function updateScore(status) {
         !data[round].some(
             (element) =>
                 element === undefined || element === "" || element === null
-        )
+        ) &&
+        document.getElementById("autoRound").checked
     ) {
         generateMatchups();
     }
@@ -314,8 +315,32 @@ function placeMatchups(matchedPlayers) {
         }
     }
     matchups = matchedPlayers;
+    console.log(ROUNDS);
+    unhideAutoRound(ROUNDS === 1);
     updateTable();
     modifyWhich();
+}
+
+function unhideAutoRound(first = false) {
+    const autoRound = document.getElementById("autoRound");
+    const autoRoundLabel = document.getElementById("autoRoundLabel");
+    if (autoRoundLabel.hidden) {
+        autoRoundLabel.hidden = false;
+    }
+    autoRound.checked = !autoRound.checked;
+    autoRound.checked = first ? true : !autoRound.checked;
+}
+
+function autoRoundClick() {
+    const autoRound = document.getElementById("autoRound");
+    if (!autoRound.checked) {
+        return;
+    }
+    if (
+        !data[ROUNDS].some((el) => el === undefined || el === null || el === "")
+    ) {
+        generateMatchups();
+    }
 }
 
 function modifyDatalist() {
@@ -444,12 +469,6 @@ function importData() {
 
     const loggy = document.getElementById("loggy");
     loggy.innerHTML = "";
-    // const logHeader = document.createElement("tr");
-    // logHeader.innerHTML = `<th class="long" colspan="3">Logs</td>`;
-    // loggy.appendChild(logHeader);
-    // const logHeader2 = document.createElement("tr");
-    // logHeader2.innerHTML = `<th>Round</th><th>Match</th><th>Result</th>`;
-    // loggy.appendChild(logHeader2);
     for (let i = 1; i <= ROUNDS; i++) {
         const roundInfo = logs[i];
         if (!roundInfo) {

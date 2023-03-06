@@ -256,8 +256,19 @@
                 return "Are you sure you would like to quit the current tournament session?";
             };
         </script>
-        <div id="container" class="inner bottom">
+        <div id="container" class="inner">
             <div id="table-container" class="inner bottom"></div>
+        </div>
+        <div id="autoRoundDiv" class="inner bottom" style="margin-top: 0.25em;">
+            <label id="autoRoundLabel" hidden>
+                Pair automatically
+                <input
+                    type="checkbox"
+                    id="autoRound"
+                    onclick="autoRoundClick()"
+                    checked
+                >
+            </label>
         </div>
         <div id="show_hide" class="inner bottom">
             <label hidden>
