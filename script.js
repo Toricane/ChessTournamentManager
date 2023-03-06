@@ -315,6 +315,7 @@ function placeMatchups(matchedPlayers) {
     }
     matchups = matchedPlayers;
     updateTable();
+    modifyWhich();
 }
 
 function modifyDatalist() {
