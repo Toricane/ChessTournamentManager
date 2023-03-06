@@ -510,7 +510,9 @@ function importData() {
 
 function clearData() {
     let keys = Object.keys(localStorage);
-    keys.splice(keys.indexOf("theme"), 1);
+    if (keys.includes("theme")) {
+        keys.splice(keys.indexOf("theme"), 1);
+    }
     if (!keys.length) {
         alert("No saves to delete!");
         return;
@@ -547,18 +549,22 @@ function downloadData() {
         return;
     }
     const saveName = document.getElementById("saveName").value;
+    console.log(saveName);
     if (saveName === "theme") {
         alert("Please enter a different name for the save!");
         return;
     }
-    if (saveName) {
+    if (saveName !== "") {
         if (!keys.includes(saveName)) {
             alert("No save with that name exists!");
             return;
         }
         keys = [saveName];
     }
-    keys.splice(keys.indexOf("theme"), 1);
+    if (keys.includes("theme")) {
+        keys.splice(keys.indexOf("theme"), 1);
+    }
+    console.log(keys);
     const saveData = {};
     for (let key of keys) {
         saveData[key] = JSON.parse(localStorage.getItem(key));
