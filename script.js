@@ -13,6 +13,20 @@ function newRound() {
     updateTable();
 }
 
+function shuffleArray(array) {
+    const shuffledArray = [...array]; // Create a copy of the original array
+
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledArray[i], shuffledArray[j]] = [
+            shuffledArray[j],
+            shuffledArray[i],
+        ];
+    }
+
+    return shuffledArray;
+}
+
 function updateScore(status) {
     const player = document.getElementById("player").value;
     const list = document.getElementById("list");
@@ -231,6 +245,41 @@ function checkIfPlayerHasBye(player, round = null) {
     return false;
 }
 
+function numberOfByes(player) {
+    let logs = getLogs();
+    let count = 0;
+    for (let round in logs) {
+        if (logs[round][player] === "bye") {
+            count++;
+        }
+    }
+    return count;
+}
+
+function numberOfRoundsBetweenByes(player) {
+    let logs = getLogs();
+    let rounds = [];
+
+    for (let round in logs) {
+        if (logs[round][player] === "bye") {
+            rounds.push(round);
+        }
+    }
+
+    rounds.push(ROUNDS);
+
+    if (rounds.length < 2) {
+        // Handle cases where the array has less than 2 elements
+        return 0;
+    }
+
+    const last = rounds[rounds.length - 2];
+    const current = rounds[rounds.length - 1];
+    const distance = current - last;
+
+    return distance === 0 ? 0 : distance - 1;
+}
+
 function checkIfPlayersHavePlayed(player1, player2) {
     if (player1 === player2) {
         return false;
@@ -295,10 +344,37 @@ function balanceColors(matchups) {
         matches = logs[round];
         for (let match in matches) {
             if (!match.includes(" vs ")) {
+                if (!Object.keys(colors).includes(match)) {
+                    colors[match] = {
+                        white: 0,
+                        black: 0,
+                        bye: 0,
+                        lastPlayed: null,
+                        consecutive: 0,
+                    };
+                }
                 colors[match].bye++;
                 continue;
             }
             game = match.split(" vs ");
+            if (!Object.keys(colors).includes(game[0])) {
+                colors[game[0]] = {
+                    white: 0,
+                    black: 0,
+                    bye: 0,
+                    lastPlayed: null,
+                    consecutive: 0,
+                };
+            }
+            if (!Object.keys(colors).includes(game[1])) {
+                colors[game[1]] = {
+                    white: 0,
+                    black: 0,
+                    bye: 0,
+                    lastPlayed: null,
+                    consecutive: 0,
+                };
+            }
             colors[game[0]][colorPlayed(game[0], round)]++;
             colors[game[1]][colorPlayed(game[1], round)]++;
         }
@@ -383,19 +459,20 @@ function balanceColors(matchups) {
             matchup.sort(() => Math.random() - 0.5);
             newMatchups.push(matchup);
         } else if (player1.lastPlayed === null || player2.lastPlayed === null) {
+            console.log(player1.lastPlayed, player2.lastPlayed);
             // if new player, just swap the colour of old player
             if (player1.lastPlayed === null) {
                 if (player2.lastPlayed === 0) {
                     matchup.reverse();
                     newMatchups.push(matchup);
-                } else if (player2.lastPlayed === 1) {
+                } else {
                     newMatchups.push(matchup);
                 }
             } else if (player2.lastPlayed === null) {
-                if (player1.lastPlayed === 0) {
+                if (player1.lastPlayed === 1) {
                     matchup.reverse();
                     newMatchups.push(matchup);
-                } else if (player1.lastPlayed === 1) {
+                } else {
                     newMatchups.push(matchup);
                 }
             }
@@ -513,16 +590,24 @@ function generateMatchups() {
     players.sort((a, b) => b.score - a.score);
     let bye;
     if (players.length % 2 === 1) {
-        let randomIndex;
-        let iter = players.length * 2;
-        while (true) {
-            randomIndex = Math.floor(Math.random() * players.length);
-            if (!checkIfPlayerHasBye(players[randomIndex].name) || iter === 0) {
+        let shuffledPlayers = shuffleArray(players);
+        for (let i = 0; i < shuffledPlayers.length; i++) {
+            if (!checkIfPlayerHasBye(players[i].name)) {
+                bye = players.splice(i, 1)[0];
                 break;
             }
-            iter--;
+            if (
+                players.length - 1 <=
+                    numberOfRoundsBetweenByes(players[i].name) &&
+                numberOfRoundsBetweenByes(players[i].name) <=
+                    players.length - 1 + players.length
+            ) {
+                console.log("second");
+                bye = players.splice(i, 1)[0];
+                break;
+            }
         }
-        bye = players.splice(randomIndex, 1)[0];
+        console.log("bye: " + bye.name, numberOfRoundsBetweenByes(bye.name));
     }
 
     // TODO: clean up this code \/
@@ -544,10 +629,37 @@ function generateMatchups() {
         matches = logs[round];
         for (let match in matches) {
             if (!match.includes(" vs ")) {
+                if (!Object.keys(colors).includes(match)) {
+                    colors[match] = {
+                        white: 0,
+                        black: 0,
+                        bye: 0,
+                        lastPlayed: null,
+                        consecutive: 0,
+                    };
+                }
                 colors[match].bye++;
                 continue;
             }
             game = match.split(" vs ");
+            if (!Object.keys(colors).includes(game[0])) {
+                colors[game[0]] = {
+                    white: 0,
+                    black: 0,
+                    bye: 0,
+                    lastPlayed: null,
+                    consecutive: 0,
+                };
+            }
+            if (!Object.keys(colors).includes(game[1])) {
+                colors[game[1]] = {
+                    white: 0,
+                    black: 0,
+                    bye: 0,
+                    lastPlayed: null,
+                    consecutive: 0,
+                };
+            }
             colors[game[0]][colorPlayed(game[0], round)]++;
             colors[game[1]][colorPlayed(game[1], round)]++;
         }
@@ -772,13 +884,24 @@ function removePlayer() {
     input.select();
     if (!name) return;
     if (!data.Players.includes(name)) return;
-    input.value = "";
+    let opponent = null;
+    for (let i = 0; i < matchups.length; i++) {
+        if (matchups[i].includes(name)) {
+            opponent = matchups[i].filter((el) => el !== name)[0];
+            break;
+        }
+    }
     const index = data.Players.indexOf(name);
     data.Players.splice(index, 1);
     for (let i = 1; i <= ROUNDS; i++) {
         data[i].splice(index, 1);
     }
     data.Total.splice(index, 1);
+    if (opponent !== null) {
+        input.value = opponent;
+        updateScore(1);
+    }
+    input.value = "";
     modifyDatalist();
     updateTable();
 }
