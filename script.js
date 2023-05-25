@@ -151,21 +151,33 @@ function updateTable() {
             cell = row.insertCell();
             cell.innerHTML = data[j][i] || "";
             if (parseFloat(cell.innerHTML) === 1) {
-                cell.classList.add("win");
-                cell.innerHTML = "";
-                const img = document.createElement("img");
-                img.src = "emoji/win.png";
-                img.alt = "1";
-                img.width = "20";
-                img.height = "20";
-                cell.appendChild(img);
+                if (checkIfPlayerHasBye(data.Players[i], j)) {
+                    cell.classList.add("bye");
+                    cell.innerHTML = "";
+                    const img = document.createElement("img");
+                    const theme = document.body.className;
+                    img.src = `emoji/bye_${theme}_mode.png`;
+                    img.alt = "bye";
+                    img.width = "20";
+                    img.height = "20";
+                    cell.appendChild(img);
+                } else {
+                    cell.classList.add("win");
+                    cell.innerHTML = "";
+                    const img = document.createElement("img");
+                    img.src = "emoji/win.png";
+                    img.alt = "1";
+                    img.width = "20";
+                    img.height = "20";
+                    cell.appendChild(img);
+                }
             } else if (parseFloat(cell.innerHTML) === 0.5) {
                 cell.classList.add("tie");
                 cell.innerHTML = "";
                 const img = document.createElement("img");
                 const theme = document.body.className;
                 img.src = `emoji/draw_${theme}_mode.png`;
-                img.alt = "0.5";
+                img.alt = "draw";
                 img.width = "20";
                 img.height = "20";
                 cell.appendChild(img);
@@ -186,7 +198,7 @@ function updateTable() {
     table.appendChild(tbody);
     let images = table.getElementsByTagName("img");
     for (let img of images) {
-        if ("1 0.5 0".includes(img.alt)) {
+        if ("1 bye draw 0".includes(img.alt)) {
             img.addEventListener("click", function (event) {
                 playerClicked(event);
                 event.stopPropagation();
@@ -203,89 +215,16 @@ function updateTable() {
     } catch (e) {}
 }
 
-function _generateMatchups() {
-    if (ROUNDS > 0) {
-        if (data[ROUNDS].some((element) => element === undefined)) {
-            alert("Please fill out all of the scores for the current round!");
-            return;
-        }
-    }
-    if (data.Players.length < 2) {
-        alert("Pairing requires at least two players!");
-        return;
-    }
-    const scoreButtons = document.getElementById("scoreButtons");
-    for (let i = 0; i < scoreButtons.children.length; i++) {
-        scoreButtons.children[i].hidden = false;
-    }
-    document.getElementById("pair").hidden = true;
-    newRound();
-    try {
-        document.getElementById("list").remove();
-    } catch (e) {}
-    let players = [];
-    for (let i = 0; i < data.Players.length; i++) {
-        players.push({
-            name: data.Players[i],
-            score: parseFloat(data.Total[i]),
-        });
-    }
-    // Sort players by score in descending order
-    players.sort((a, b) => b.score - a.score);
-    let bye;
-    if (players.length % 2 === 1) {
-        const randomIndex = Math.floor(Math.random() * players.length);
-        bye = players.splice(randomIndex, 1)[0];
-    }
-
-    // Create an empty array to store the matched players
-    const matchedPlayers = [];
-
-    // Iterate through the players array
-    for (let i = 0; i < players.length; i++) {
-        // If the current player has not yet been matched
-        if (!players[i].matched) {
-            // Find the next highest-scoring player who has not yet been matched
-            for (let j = i + 1; j < players.length; j++) {
-                if (
-                    !players[j].matched &&
-                    players[j].score === players[i].score
-                ) {
-                    // Add the current player and the next highest-scoring player to the matchedPlayers array
-                    matchedPlayers.push([players[i].name, players[j].name]);
-                    // Mark both players as matched
-                    players[i].matched = true;
-                    players[j].matched = true;
-                    break;
-                }
-            }
-            // If there is an odd number of players with the same score, one will be left unmatched
-            // In this case, we will just match that player with the next unmatched player with a lower score
-            if (
-                i === players.length - 1 ||
-                players[i].score !== players[i + 1].score
-            ) {
-                for (let j = i + 1; j < players.length; j++) {
-                    if (!players[j].matched) {
-                        matchedPlayers.push([players[i].name, players[j].name]);
-                        players[i].matched = true;
-                        players[j].matched = true;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    matchedPlayers.forEach((innerArr) =>
-        innerArr.sort(() => Math.random() - 0.5)
-    );
-    placeMatchups(matchedPlayers);
-}
-
-function checkIfPlayerHasBye(player) {
+function checkIfPlayerHasBye(player, round = null) {
     let logs = getLogs();
-    for (let round in logs) {
+    if (round !== null) {
         if (logs[round][player] === "bye") {
+            return true;
+        }
+        return false;
+    }
+    for (let _round in logs) {
+        if (logs[_round][player] === "bye") {
             return true;
         }
     }
@@ -343,8 +282,14 @@ function balanceColors(matchups) {
     let players = data.Players;
     let colors = {};
     for (let player of players) {
-        colors[player] = {"white": 0, "black": 0, "bye": 0, "lastPlayed": null, "consecutive": 0};
-    }  // lastPlayed = 0 || 1, 0 = black, 1 = white; consecutive = number of consecutive games played with same color
+        colors[player] = {
+            white: 0,
+            black: 0,
+            bye: 0,
+            lastPlayed: null,
+            consecutive: 0,
+        };
+    } // lastPlayed = 0 || 1, 0 = black, 1 = white; consecutive = number of consecutive games played with same color
     let matches, game;
     for (let round in logs) {
         matches = logs[round];
@@ -366,7 +311,9 @@ function balanceColors(matchups) {
                     colors[player].lastPlayed = null;
                     break;
                 }
-                colors[player].lastPlayed = convertToNumber(colorPlayed(player, lastRound));
+                colors[player].lastPlayed = convertToNumber(
+                    colorPlayed(player, lastRound)
+                );
                 if (colors[player].lastPlayed === "bye") {
                     lastRound--;
                 } else {
@@ -376,25 +323,29 @@ function balanceColors(matchups) {
             if (colors[player].lastPlayed === undefined) {
                 colors[player].lastPlayed = null;
             }
-            console.log(lastRound, "lastRound")
+
             if (lastRound >= 3) {
                 let helper = {
-                    "lastRound": colors[player].lastPlayed,
-                    "beforeLastRound": convertToNumber(colorPlayed(player, lastRound - 1)),
-                    "beforeBeforeLastRound": convertToNumber(colorPlayed(player, lastRound - 2))
-                }
+                    lastRound: colors[player].lastPlayed,
+                    beforeLastRound: convertToNumber(
+                        colorPlayed(player, lastRound - 1)
+                    ),
+                    beforeBeforeLastRound: convertToNumber(
+                        colorPlayed(player, lastRound - 2)
+                    ),
+                };
                 if (
-                    helper.beforeBeforeLastRound !== null 
-                    && helper.beforeLastRound !== null 
-                    && helper.lastRound !== null
-                    && helper.lastRound === helper.beforeLastRound 
-                    && helper.beforeLastRound === helper.beforeBeforeLastRound
+                    helper.beforeBeforeLastRound !== null &&
+                    helper.beforeLastRound !== null &&
+                    helper.lastRound !== null &&
+                    helper.lastRound === helper.beforeLastRound &&
+                    helper.beforeLastRound === helper.beforeBeforeLastRound
                 ) {
                     colors[player].consecutive = 3;
                 } else if (
-                    helper.beforeLastRound !== null
-                    && helper.lastRound !== null
-                    && helper.lastRound === helper.beforeLastRound
+                    helper.beforeLastRound !== null &&
+                    helper.lastRound !== null &&
+                    helper.lastRound === helper.beforeLastRound
                 ) {
                     colors[player].consecutive = 2;
                 } else {
@@ -402,9 +353,11 @@ function balanceColors(matchups) {
                 }
             } else if (lastRound >= 2) {
                 if (
-                    convertToNumber(colorPlayed(player, lastRound - 1)) !== null
-                    && colors[player].lastPlayed !== null
-                    && colors[player].lastPlayed === convertToNumber(colorPlayed(player, ROUNDS - 2))
+                    convertToNumber(colorPlayed(player, lastRound - 1)) !==
+                        null &&
+                    colors[player].lastPlayed !== null &&
+                    colors[player].lastPlayed ===
+                        convertToNumber(colorPlayed(player, ROUNDS - 2))
                 ) {
                     colors[player].consecutive = 2;
                 } else {
@@ -415,14 +368,16 @@ function balanceColors(matchups) {
             }
         }
     }
-    console.log(colors)
 
     let newMatchups = [];
     let player1Name, player2Name, player1, player2, diff1, diff2;
     for (let matchup of matchups) {
         [player1Name, player2Name] = matchup;
         [player1, player2] = [colors[player1Name], colors[player2Name]];
-        [diff1, diff2] = [player1.white /* + player1.bye */ - player1.black, player2.white /* + player2.bye */ - player2.black];
+        [diff1, diff2] = [
+            player1.white /* + player1.bye */ - player1.black,
+            player2.white /* + player2.bye */ - player2.black,
+        ];
         if (player1.lastPlayed === null && player2.lastPlayed === null) {
             // if first round
             matchup.sort(() => Math.random() - 0.5);
@@ -446,14 +401,22 @@ function balanceColors(matchups) {
             }
         } else if (player1.consecutive >= 2 || player2.consecutive >= 2) {
             if (player1.consecutive >= 2 && player2.consecutive >= 2) {
-                if (player1.lastPlayed === 1 && player2.lastPlayed === 1 
-                    || player1.lastPlayed === 0 && player2.lastPlayed === 0) {
+                if (
+                    (player1.lastPlayed === 1 && player2.lastPlayed === 1) ||
+                    (player1.lastPlayed === 0 && player2.lastPlayed === 0)
+                ) {
                     matchup.sort(() => Math.random() - 0.5);
                     newMatchups.push(matchup);
-                } else if (player1.lastPlayed === 1 && player2.lastPlayed === 0) {
+                } else if (
+                    player1.lastPlayed === 1 &&
+                    player2.lastPlayed === 0
+                ) {
                     matchup.reverse();
                     newMatchups.push(matchup);
-                } else if (player1.lastPlayed === 0 && player2.lastPlayed === 1) {
+                } else if (
+                    player1.lastPlayed === 0 &&
+                    player2.lastPlayed === 1
+                ) {
                     newMatchups.push(matchup);
                 }
             } else if (player1.consecutive >= 2) {
@@ -518,8 +481,6 @@ function balanceColors(matchups) {
     return matchups;
 }
 
-
-
 function generateMatchups() {
     if (ROUNDS > 0) {
         if (data[ROUNDS].some((element) => element === undefined)) {
@@ -545,7 +506,7 @@ function generateMatchups() {
         players.push({
             name: data.Players[i],
             score: parseFloat(data.Total[i]),
-            matched: false
+            matched: false,
         });
     }
     // Sort players by score in descending order
@@ -564,16 +525,20 @@ function generateMatchups() {
         bye = players.splice(randomIndex, 1)[0];
     }
 
-
-
     // TODO: clean up this code \/
 
     let logs = getLogs();
     // let players = data.Players;
     let colors = {};
     for (let player of data.Players) {
-        colors[player] = {"white": 0, "black": 0, "bye": 0, "lastPlayed": null, "consecutive": 0};
-    }  // lastPlayed = 0 || 1, 0 = black, 1 = white; consecutive = number of consecutive games played with same color
+        colors[player] = {
+            white: 0,
+            black: 0,
+            bye: 0,
+            lastPlayed: null,
+            consecutive: 0,
+        };
+    } // lastPlayed = 0 || 1, 0 = black, 1 = white; consecutive = number of consecutive games played with same color
     let matches, game;
     for (let round in logs) {
         matches = logs[round];
@@ -583,7 +548,6 @@ function generateMatchups() {
                 continue;
             }
             game = match.split(" vs ");
-            console.log(colors, match, game, "lol")
             colors[game[0]][colorPlayed(game[0], round)]++;
             colors[game[1]][colorPlayed(game[1], round)]++;
         }
@@ -597,7 +561,9 @@ function generateMatchups() {
                     colors[player].lastPlayed = null;
                     break;
                 }
-                colors[player].lastPlayed = convertToNumber(colorPlayed(player, lastRound));
+                colors[player].lastPlayed = convertToNumber(
+                    colorPlayed(player, lastRound)
+                );
                 if (colors[player].lastPlayed === "bye") {
                     lastRound--;
                 } else {
@@ -607,25 +573,29 @@ function generateMatchups() {
             if (colors[player].lastPlayed === undefined) {
                 colors[player].lastPlayed = null;
             }
-            console.log(lastRound, "lastRound")
+
             if (lastRound >= 3) {
                 let helper = {
-                    "lastRound": colors[player].lastPlayed,
-                    "beforeLastRound": convertToNumber(colorPlayed(player, lastRound - 1)),
-                    "beforeBeforeLastRound": convertToNumber(colorPlayed(player, lastRound - 2))
-                }
+                    lastRound: colors[player].lastPlayed,
+                    beforeLastRound: convertToNumber(
+                        colorPlayed(player, lastRound - 1)
+                    ),
+                    beforeBeforeLastRound: convertToNumber(
+                        colorPlayed(player, lastRound - 2)
+                    ),
+                };
                 if (
-                    helper.beforeBeforeLastRound !== null 
-                    && helper.beforeLastRound !== null 
-                    && helper.lastRound !== null
-                    && helper.lastRound === helper.beforeLastRound 
-                    && helper.beforeLastRound === helper.beforeBeforeLastRound
+                    helper.beforeBeforeLastRound !== null &&
+                    helper.beforeLastRound !== null &&
+                    helper.lastRound !== null &&
+                    helper.lastRound === helper.beforeLastRound &&
+                    helper.beforeLastRound === helper.beforeBeforeLastRound
                 ) {
                     colors[player].consecutive = 3;
                 } else if (
-                    helper.beforeLastRound !== null
-                    && helper.lastRound !== null
-                    && helper.lastRound === helper.beforeLastRound
+                    helper.beforeLastRound !== null &&
+                    helper.lastRound !== null &&
+                    helper.lastRound === helper.beforeLastRound
                 ) {
                     colors[player].consecutive = 2;
                 } else {
@@ -633,9 +603,11 @@ function generateMatchups() {
                 }
             } else if (lastRound >= 2) {
                 if (
-                    convertToNumber(colorPlayed(player, lastRound - 1)) !== null
-                    && colors[player].lastPlayed !== null
-                    && colors[player].lastPlayed === convertToNumber(colorPlayed(player, ROUNDS - 2))
+                    convertToNumber(colorPlayed(player, lastRound - 1)) !==
+                        null &&
+                    colors[player].lastPlayed !== null &&
+                    colors[player].lastPlayed ===
+                        convertToNumber(colorPlayed(player, ROUNDS - 2))
                 ) {
                     colors[player].consecutive = 2;
                 } else {
@@ -647,10 +619,7 @@ function generateMatchups() {
         }
     }
 
-
     // TODO: clean up this code /\
-
-
 
     // Create an empty array to store the matched players
     let matchedPlayers = [];
@@ -664,7 +633,11 @@ function generateMatchups() {
         let player2;
         let done = false;
         let range = players;
-        range.sort((a, b) => Math.abs(player1.score - a.score) - Math.abs(player1.score - b.score));
+        range.sort(
+            (a, b) =>
+                Math.abs(player1.score - a.score) -
+                Math.abs(player1.score - b.score)
+        );
         for (let j = 0; j < range.length; j++) {
             if (range[j].matched || range[j].name === players[i].name) {
                 continue;
@@ -672,12 +645,16 @@ function generateMatchups() {
             player2 = range[j].name;
             let player1Obj = colors[player1];
             let player2Obj = colors[player2];
-            if (!(
-                    checkIfPlayersHavePlayed(player1, player2) 
-                    || (player1Obj.consecutive >= 2 && player2Obj.consecutive >= 2)
-                    || (player1Obj.lastPlayed === player2Obj.lastPlayed 
-                        && (player1Obj.consecutive >= 2 || player2Obj.consecutive >= 2))
-                )) {
+            if (
+                !(
+                    checkIfPlayersHavePlayed(player1, player2) ||
+                    (player1Obj.consecutive >= 2 &&
+                        player2Obj.consecutive >= 2) ||
+                    (player1Obj.lastPlayed === player2Obj.lastPlayed &&
+                        (player1Obj.consecutive >= 2 ||
+                            player2Obj.consecutive >= 2))
+                )
+            ) {
                 matchedPlayers.push([player1, player2]);
                 players[i].matched = true;
                 range[j].matched = true;
@@ -688,7 +665,10 @@ function generateMatchups() {
         if (!done) {
             // get random player and match with player i
             let randomIndex = Math.floor(Math.random() * players.length);
-            while (players[randomIndex].matched || players[randomIndex].name === players[i].name) {
+            while (
+                players[randomIndex].matched ||
+                players[randomIndex].name === players[i].name
+            ) {
                 randomIndex = Math.floor(Math.random() * players.length);
             }
             player2 = players[randomIndex].name;
@@ -700,7 +680,7 @@ function generateMatchups() {
     }
 
     const newMatches = balanceColors(matchedPlayers); // NEED HELP HERE
-    
+
     placeMatchups(newMatches);
 }
 
@@ -726,10 +706,8 @@ function placeMatchups(matchedPlayers, full = false) {
             addMatchToLog(ROUNDS, data.Players[i], null, "bye");
             const ind = data.Players.indexOf(data.Players[i]);
             if (!data[ROUNDS][ind]) {
-                data[ROUNDS][ind] = 0.5;
-                data.Total[ind] = (
-                    parseFloat(data.Total[ind]) + 0.5
-                ).toString();
+                data[ROUNDS][ind] = 1;
+                data.Total[ind] = (parseFloat(data.Total[ind]) + 1).toString();
             }
         }
     }
@@ -1215,12 +1193,20 @@ function toggleTheme() {
     body.classList.toggle("dark");
     const theme = document.getElementById("theme");
     theme.innerHTML = "";
-    let images = document.querySelectorAll('img[alt="0.5"]');
+    let images = document.querySelectorAll('img[alt="draw"]');
     for (let image of images) {
         if (body.classList.contains("light")) {
             image.src = "emoji/draw_light_mode.png";
         } else {
             image.src = "emoji/draw_dark_mode.png";
+        }
+    }
+    images = document.querySelectorAll('img[alt="bye"]');
+    for (let image of images) {
+        if (body.classList.contains("light")) {
+            image.src = "emoji/bye_light_mode.png";
+        } else {
+            image.src = "emoji/bye_dark_mode.png";
         }
     }
     if (body.classList.contains("light")) {
@@ -1274,7 +1260,7 @@ function giveInfo(id) {
             return "Pair the players and start the tournament";
         case "1":
             return "Mark the selected player as the winner";
-        case "0.5":
+        case "draw":
             return "Mark the selected player's match as a draw";
     }
 }
@@ -1283,9 +1269,9 @@ function initButtons() {
     const buttons = document.querySelectorAll("button");
     const infoContainer = document.getElementById("info-container");
     let timeoutId;
-    const inputElement = document.getElementById('player');
-    inputElement.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
+    const inputElement = document.getElementById("player");
+    inputElement.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
             addPlayer();
         }
     });
