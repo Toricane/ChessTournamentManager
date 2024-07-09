@@ -121,10 +121,25 @@ To delete a saved tournament:
 -   [x] Detailed but simple
 -   [x] Tournaments can be saved and shared
 -   [x] Different themes
+-   [x] Docker Support
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTACT -->
+
+<!-- DOCKER -->
+
+## How to use this with docker
+
+To use this simple website with docker you have to do the following steps:
+
+1. Check out the main branch locally.
+2. Go to the directory where the "Dockerfile" is located and start a terminal
+3. Use following command to build the docker image ```docker build -t ChessTournamentManager .```
+4. Run the service with ```docker run -d -p 8080:80 ChessTournamentManager:latest```
+5. Now just open the website with ```http://localhost:8080```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Contact
 
@@ -139,6 +154,7 @@ Project Link: [https://github.com/Toricane/ChessTournamentManager](https://githu
 ## Acknowledgments
 
 -   [Twemoji](https://twemoji.twitter.com/) for the emoji
+-   [Pasi1337](https://github.com/byayex) for implementing the docker support
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
