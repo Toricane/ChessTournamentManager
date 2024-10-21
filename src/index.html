@@ -296,5 +296,13 @@
                 <tbody id="loggy"></tbody>
             </table>
         </div>
+        <div id="endScreenPopup" class="popup" style="display: none;">
+            <div id="endScreenContent">
+                <h2 id="endScreenTitle">Tournament Ended</h2>
+                <div id="endScreenScoreboard"></div>
+                <button id="reloadButton" onclick="location.reload();">Reload</button>
+                <button id="continueButton" onclick="document.getElementById('endScreenPopup').style.display='none';">Continue</button>
+            </div>
+        </div>
     </body>
 </html>

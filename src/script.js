@@ -794,6 +794,23 @@ function generateMatchups() {
     const newMatches = balanceColors(matchedPlayers); // NEED HELP HERE
 
     placeMatchups(newMatches);
+
+    // Check if all players have played with each other
+    if (data.Players.length > 1 && ROUNDS > 1) {
+        let allPlayed = true;
+        for (let i = 0; i < data.Players.length; i++) {
+            for (let j = i + 1; j < data.Players.length; j++) {
+                if (!checkIfPlayersHavePlayed(data.Players[i], data.Players[j])) {
+                    allPlayed = false;
+                    break;
+                }
+            }
+            if (!allPlayed) break;
+        }
+        if (allPlayed) {
+            showEndScreenPopup();
+        }
+    }
 }
 
 function placeMatchups(matchedPlayers, full = false) {
@@ -1449,4 +1466,46 @@ function initButtons() {
             }, 1000);
         });
     });
+}
+
+function showEndScreenPopup() {
+    const endScreenPopup = document.getElementById("endScreenPopup");
+    const endScreenScoreboard = document.getElementById("endScreenScoreboard");
+
+    // Clear previous scoreboard content
+    endScreenScoreboard.innerHTML = "";
+
+    // Create a table for the scoreboard
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const tbody = document.createElement("tbody");
+
+    // Create table header
+    const headerRow = document.createElement("tr");
+    const playerHeader = document.createElement("th");
+    playerHeader.textContent = "Player";
+    const scoreHeader = document.createElement("th");
+    scoreHeader.textContent = "Score";
+    headerRow.appendChild(playerHeader);
+    headerRow.appendChild(scoreHeader);
+    thead.appendChild(headerRow);
+
+    // Create table rows for each player and their score
+    data.Players.forEach((player, index) => {
+        const row = document.createElement("tr");
+        const playerCell = document.createElement("td");
+        playerCell.textContent = player;
+        const scoreCell = document.createElement("td");
+        scoreCell.textContent = data.Total[index];
+        row.appendChild(playerCell);
+        row.appendChild(scoreCell);
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    endScreenScoreboard.appendChild(table);
+
+    // Show the end screen popup
+    endScreenPopup.style.display = "block";
 }

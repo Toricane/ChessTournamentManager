@@ -122,6 +122,7 @@ To delete a saved tournament:
 -   [x] Tournaments can be saved and shared
 -   [x] Different themes
 -   [x] Docker Support
+-   [x] End screen popup with title, scoreboard, and options to reload or continue the game
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
